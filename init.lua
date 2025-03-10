@@ -640,7 +640,24 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        --
+        --
+        -- One thing you should keep in mind about pyproject.toml and such is that as soon as you add a basedpyright section in there, it will override all the diagnosticsSeverityOverride settings in your neovim config, even if you didn't specify any in the project specific config.
+        basedpyright = {
+          enabled = true,
+          settings = {
+            disableOrganizeImports = true,
+            basedpyright = {
+              analysis = {
+                -- ignore = { "*" },
+                typeCheckingMode = 'standard',
+                diagnosticMode = 'openFilesOnly',
+                useLibraryCodeForTypes = true,
+              },
+            },
+          },
+        },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -921,7 +938,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'python', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
