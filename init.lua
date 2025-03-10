@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -346,6 +346,36 @@ require('lazy').setup({
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
+  --
+
+  --
+
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+      -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+  },
+
+  { -- Buffer Line (Tabs) [cyrill]
+    'akinsho/bufferline.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('bufferline').setup {
+        options = {
+          mode = 'tabs',
+          separator_style = 'slant',
+          always_show_bufferline = true,
+          show_buffer_close_icons = vim.g.have_nerd_font,
+          show_close_icon = vim.g.have_nerd_font,
+        },
+      }
+    end,
+  },
 
   { -- [cyrill] firevim
     'glacambre/firenvim',
@@ -902,7 +932,6 @@ require('lazy').setup({
     'tanvirtin/monokai.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
-
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
@@ -984,7 +1013,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
