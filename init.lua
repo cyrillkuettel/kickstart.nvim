@@ -291,6 +291,10 @@ require('lazy').setup({
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
   --
 
+  { -- [cyrill]
+    'michaeljsmith/vim-indent-object',
+    lazy = false,
+  },
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
