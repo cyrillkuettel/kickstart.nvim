@@ -938,7 +938,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'monokai'
+      vim.cmd.colorscheme 'monokai_pro'
 
       -- Set the color for plain text
       vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
