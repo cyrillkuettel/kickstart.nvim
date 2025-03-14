@@ -169,6 +169,12 @@ vim.opt.scrolloff = 10
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
+-- Execute current line in lua
+-- Execute current line in lua
+vim.keymap.set('n', '<space>X', ':.lua<CR>')
+-- Execute selected lines in lua
+vim.keymap.set('v', '<space>X', ':lua<CR>')
+
 vim.keymap.set('n', '<S-Tab>', ':Neotree toggle<CR>', { noremap = true, silent = true })
 
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and stay in visual mode' })
@@ -232,6 +238,23 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
     vim.highlight.on_yank()
   end,
+})
+
+-- Using Ruff alongside basdpyright, therefore we defer to that
+-- language server for certain capabilities, like textDocument/hover:
+vim.api.nvim_create_autocmd('LspAttach', {
+  group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client == nil then
+      return
+    end
+    if client.name == 'ruff' then
+      -- Disable hover in favor of Pyright
+      client.server_capabilities.hoverProvider = false
+    end
+  end,
+  desc = 'LSP: Disable hover capability from Ruff',
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -679,7 +702,9 @@ require('lazy').setup({
         -- gopls = {},
         --
         --
-        -- One thing you should keep in mind about pyproject.toml and such is that as soon as you add a basedpyright section in there, it will override all the diagnosticsSeverityOverride settings in your neovim config, even if you didn't specify any in the project specific config.
+        -- I actually only use basedpyright for go to definition and the like.
+        -- For type checking we use mypy and we use ruff for linting.
+        -- We might sometime get rid of this here but for now we use it.
         basedpyright = {
           enabled = true,
           settings = {
@@ -707,11 +732,18 @@ require('lazy').setup({
                   reportOptionalOperand = 'none',
                   -- Add any other error types you want to disable
                 },
-                typeCheckingMode = 'off', -- Change to 'off' instead of 'standard'
+                typeCheckingMode = 'off', -- Using mypy
                 diagnosticMode = 'openFilesOnly',
                 useLibraryCodeForTypes = true,
               },
             },
+          },
+        },
+
+        ruff = {
+          enabled = true,
+          settings = {
+            logLevel = 'info',
           },
         },
 
@@ -783,7 +815,7 @@ require('lazy').setup({
     cmd = { 'ConformInfo' },
     keys = {
       {
-        '<leader>f',
+        '<leader>b',
         function()
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
@@ -792,12 +824,14 @@ require('lazy').setup({
       },
     },
     opts = {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        -- Python is also disabled to avoid creating huge diffs. I'd rather
+        -- format specific file sections.
+        local disable_filetypes = { c = true, cpp = true, python = true }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
           lsp_format_opt = 'never'
@@ -813,7 +847,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        --
+        python = { 'ruff_fix', 'ruff_format' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
