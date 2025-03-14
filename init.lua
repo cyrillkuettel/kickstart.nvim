@@ -978,16 +978,23 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     --
-    'tanvirtin/monokai.nvim',
+    'crusoexia/monokai.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'monokai_pro'
+      vim.cmd.colorscheme 'monokai'
+
+      -- Overwrite background color to be darker
+      vim.cmd.hi 'Normal guibg=#1c1c1c ctermbg=234'
 
       -- Set the color for plain text
       vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
+
+      -- Try to override imports
+      vim.cmd.hi 'Include guifg=#FFFFFF ctermfg=15'
+      vim.cmd.hi 'PreProc guifg=#FFFFFF ctermfg=15' -- This often controls import styling
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
