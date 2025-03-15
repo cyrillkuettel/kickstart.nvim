@@ -376,11 +376,6 @@ require('lazy').setup({
     end,
   },
 
-  { -- [cyrill] firevim
-    'glacambre/firenvim',
-    build = ':call firenvim#install(0)',
-  },
-
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
