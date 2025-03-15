@@ -169,7 +169,13 @@ vim.opt.scrolloff = 10
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Execute current line in lua
+-- Make leader+b invoke Black formatter on selected text
+vim.keymap.set(
+  'v',
+  '<leader>b',
+  '!black -q --line-length 79 --skip-string-normalization -<CR>',
+  { noremap = true, silent = true, desc = 'Format selection with Black' }
+)
 -- Execute current line in lua
 vim.keymap.set('n', '<space>X', ':.lua<CR>')
 -- Execute selected lines in lua
@@ -460,8 +466,12 @@ require('lazy').setup({
 
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set({ 'n', 'i' }, '<A-4>', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+
+      vim.keymap.set('n', ',,', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', ',s', '/', { desc = 'Search' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -815,7 +825,7 @@ require('lazy').setup({
     cmd = { 'ConformInfo' },
     keys = {
       {
-        '<leader>b',
+        '<leader>f',
         function()
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
@@ -847,7 +857,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        python = { 'ruff_fix', 'ruff_format' },
+        python = { 'ruff_fix' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
@@ -1069,9 +1079,8 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
+  --
   require 'kickstart.plugins.neo-tree',
-  require 'custom.plugins.fterm',
-  require 'custom.plugins.blame',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
@@ -1079,7 +1088,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
