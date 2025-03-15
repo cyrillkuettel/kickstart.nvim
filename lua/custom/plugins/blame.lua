@@ -5,14 +5,14 @@ return {
     config = function()
       local blame = require 'blame'
 
-      -- Define highlight groups with different intensities (you'd put this somewhere in your colorscheme setup)
+      -- Define highlight groups with different intensities
       vim.api.nvim_command 'highlight BlameRecent guifg=#50fa7b gui=bold' -- Bright green for very recent
       vim.api.nvim_command 'highlight BlameDaysOld guifg=#8be9fd' -- Cyan for days old
       vim.api.nvim_command 'highlight BlameWeeksOld guifg=#bd93f9' -- Purple for weeks old
       vim.api.nvim_command 'highlight BlameMonthsOld guifg=#ff79c6' -- Pink for months old
       vim.api.nvim_command 'highlight BlameOld guifg=#6272a4' -- Dim blue for old commits
 
-      -- Define custom format function with age-based coloring
+      -- Define custom format function with age-based coloring and no commit hash
       local function age_colored_format_fn(line_porcelain, config, idx)
         local hash = string.sub(line_porcelain.hash, 0, 7)
         local line_with_hl = {}
@@ -45,19 +45,15 @@ return {
             idx = idx,
             values = {
               {
-                textValue = hash,
-                hl = 'Comment',
-              },
-              {
                 textValue = os.date(config.date_format, commit_time),
-                hl = highlight, -- Use age-based highlight
+                hl = highlight,
               },
               {
                 textValue = first_name or line_porcelain.author,
-                hl = highlight, -- Use age-based highlight
+                hl = highlight,
               },
             },
-            format = '%s  %s  %s',
+            format = '%s  %s',
           }
         else
           line_with_hl = {
