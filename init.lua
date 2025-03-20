@@ -726,41 +726,23 @@ require('lazy').setup({
         -- I actually only use basedpyright for go to definition and the like.
         -- For type checking we use mypy and we use ruff for linting.
         -- We might sometime get rid of this here but for now we use it.
+        -- This will overwrite the project specific settings
         basedpyright = {
           enabled = true,
           settings = {
-            disableOrganizeImports = true,
+            disableOrganizeImports = false,
             basedpyright = {
               analysis = {
-                diagnosticSeverityOverrides = {
-
-                  -- This completely disables all error diagnostics
-                  reportGeneralTypeIssues = 'none',
-                  reportOptionalMemberAccess = 'none',
-                  reportOptionalSubscript = 'none',
-                  reportPrivateImportUsage = 'none',
-                  reportUnboundVariable = 'none',
-                  reportUnusedImport = 'none',
-                  reportMissingImports = 'none',
-                  reportInvalidTypeVarUse = 'none',
-                  reportMissingTypeStubs = 'none',
-                  reportUndefinedVariable = 'none',
-                  reportUnusedVariable = 'none',
-                  reportUnusedFunction = 'none',
-                  reportUnusedClass = 'none',
-                  reportOptionalIterable = 'none',
-                  reportOptionalContextManager = 'none',
-                  reportOptionalOperand = 'none',
-                  -- Add any other error types you want to disable
-                },
                 typeCheckingMode = 'off', -- Using mypy
                 diagnosticMode = 'openFilesOnly',
+                inlayHints = {
+                  callArgumentNames = true,
+                },
                 useLibraryCodeForTypes = true,
               },
             },
           },
         },
-
         ruff = {
           enabled = true,
           settings = {
