@@ -424,6 +424,20 @@ require('lazy').setup({
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
+      local focus_preview = function(prompt_bufnr)
+        local action_state = require 'telescope.actions.state'
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        local prompt_win = picker.prompt_win
+        local previewer = picker.previewer
+        local winid = previewer.state.winid
+        local bufnr = previewer.state.bufnr
+        vim.keymap.set('n', '<Tab>', function()
+          vim.cmd(string.format('noautocmd lua vim.api.nvim_set_current_win(%s)', prompt_win))
+        end, { buffer = bufnr })
+        vim.cmd(string.format('noautocmd lua vim.api.nvim_set_current_win(%s)', winid))
+        -- api.nvim_set_current_win(winid)
+      end
+
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
@@ -454,6 +468,18 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
+        defaults = {
+          mappings = {
+            i = {
+              -- Bind Tab in insert mode
+              ['<Tab>'] = focus_preview,
+            },
+            n = {
+              -- Bind Tab in normal mode
+              ['<Tab>'] = focus_preview,
+            },
+          },
+        },
         pickers = {
           live_grep = {
             additional_args = function()
