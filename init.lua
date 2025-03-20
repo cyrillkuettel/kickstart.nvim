@@ -462,10 +462,26 @@ require('lazy').setup({
         local previewer = picker.previewer
         local winid = previewer.state.winid
         local bufnr = previewer.state.bufnr
+
+        -- original focus mapping
         vim.keymap.set('n', '<Tab>', function()
           vim.cmd(string.format('noautocmd lua vim.api.nvim_set_current_win(%s)', prompt_win))
         end, { buffer = bufnr })
         vim.cmd(string.format('noautocmd lua vim.api.nvim_set_current_win(%s)', winid))
+
+        -- use <leader>w to save to real file in preview
+        vim.keymap.set('n', '<leader>w', function()
+          local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+          local entry = require('telescope.actions.state').get_selected_entry()
+          local filename = require('plenary.path'):new(entry.filename):normalize(vim.loop.cwd())
+          local real_buf = vim.fn.bufadd(filename)
+          vim.fn.bufload(real_buf)
+          vim.api.nvim_buf_call(real_buf, function()
+            vim.api.nvim_buf_set_lines(real_buf, 0, -1, false, lines)
+            vim.cmd.write()
+          end)
+        end, { buffer = bufnr })
+
         -- api.nvim_set_current_win(winid)
       end
 
