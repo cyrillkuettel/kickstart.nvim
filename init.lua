@@ -366,7 +366,9 @@ require('lazy').setup({
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
   --
 
-  { -- [cyrill]
+  -- [cyrill]
+
+  {
     'michaeljsmith/vim-indent-object',
     lazy = false,
   },
@@ -850,7 +852,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        python = { 'ruff_fix', 'ruff_format' },
+        python = { 'ruff_fix' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
@@ -1123,7 +1125,7 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
-})
+}) -- lazy setup
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
