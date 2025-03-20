@@ -489,10 +489,10 @@ require('lazy').setup({
 
       vim.keymap.set('n', ',,', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-      vim.keymap.set('n', ',s', '/', { desc = 'Search' })
+      -- vim.keymap.set('n', ',s', '/', { desc = 'Search' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
+      vim.keymap.set('n', 's', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
