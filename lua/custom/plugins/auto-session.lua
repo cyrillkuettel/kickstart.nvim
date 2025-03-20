@@ -7,7 +7,7 @@ return {
   ---@type AutoSession.Config
   opts = {
     suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-    use_git_branch = false,
+    use_git_branch = true,
     -- log_level = 'debug',
   },
 }
