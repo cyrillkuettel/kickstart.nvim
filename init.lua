@@ -168,12 +168,33 @@ vim.opt.scrolloff = 10
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+vim.api.nvim_create_user_command('PyrightOrganizeImports', function()
+  local params = {
+    command = 'basedpyright.organizeimports',
+    arguments = { vim.uri_from_bufnr(0) },
+  }
+
+  -- Get the basedpyright client
+  local util = require 'lspconfig.util'
+  local clients = util.get_lsp_clients {
+    bufnr = vim.api.nvim_get_current_buf(),
+    name = 'basedpyright',
+  }
+
+  -- Send the request to each client
+  for _, client in ipairs(clients) do
+    client.request('workspace/executeCommand', params, nil, 0)
+  end
+end, {})
+
+-- Fix the keymap
+vim.keymap.set('n', '<leader>cc', ':PyrightOrganizeImports<CR>', { noremap = true, silent = true })
 
 -- Make leader+b invoke Black formatter on selected text
 vim.keymap.set(
   'v',
   '<leader>b',
-  '!black -q --line-length 79 --skip-string-normalization -<CR>',
+  ':!python3.11 -m black -q --line-length 79 --skip-string-normalization -<CR>',
   { noremap = true, silent = true, desc = 'Format selection with Black' }
 )
 -- Execute current line in lua
