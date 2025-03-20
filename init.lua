@@ -501,24 +501,49 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+      local previewers = require 'telescope.previewers'
+
       vim.keymap.set('n', ',sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', ',sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', ',sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+
+      -- I really like fyf to search and go to files.
+      vim.keymap.set('n', 'fyf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', ',ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', ',sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
 
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      local delta_commits = previewers.new_termopen_previewer {
+        get_command = function(entry)
+          return { 'git', '-c', 'core.pager=delta', '-c', 'delta.side-by-side=false', 'diff', entry.value .. '^!', '--', entry.current_file }
+        end,
+      }
+      local my_git_commits = function(opts)
+        opts = opts or {}
+        opts.previewer = {
+          delta_commits,
+          previewers.git_commit_message.new(opts),
+          previewers.git_commit_diff_as_was.new(opts),
+        }
+        builtin.git_commits(opts)
+      end
+      vim.keymap.set('n', ',gc', my_git_commits, { desc = '[G]it [C]commits' })
+
+      vim.keymap.set('n', ',gs', builtin.git_status, { desc = '[G]it [S]tatus' })
+
+      vim.keymap.set('n', ',sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', ',sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
       vim.keymap.set({ 'n', 'i' }, '<A-4>', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
 
       vim.keymap.set('n', ',,', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
-      -- vim.keymap.set('n', ',s', '/', { desc = 'Search' })
+      --
+      -- Use s for the fastes available search.
+      vim.keymap.set('n', 's', '/', { desc = 'Search' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', 's', function()
+      -- It's also possible to pass additional configuration options.
+      --  See `:help telescope.builtin.live_grep()` for information about particular keys
+      vim.keymap.set('n', ',sc', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
