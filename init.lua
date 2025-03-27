@@ -195,16 +195,44 @@ vim.api.nvim_create_user_command('PyrightOrganizeImports', function()
   end
 end, {})
 
--- Fix the keymap
-vim.keymap.set('n', '<leader>cc', ':PyrightOrganizeImports<CR>', { noremap = true, silent = true })
+-- Simpler function to format visual selection with black --line-ranges
+local function format_visual_black()
+  local start_line = vim.fn.line "'<"
+  local end_line = vim.fn.line "'>"
+  local file_path = vim.fn.expand '%:p' -- Get full path
 
--- Make leader+b invoke Black formatter on selected text
-vim.keymap.set(
-  'v',
-  '<leader>b',
-  ':!python3.11 -m black -q --line-length 79 --skip-string-normalization -<CR>',
-  { noremap = true, silent = true, desc = 'Format selection with Black' }
-)
+  -- Basic check: Need a saved file
+  if file_path == '' then
+    print 'Error: Save the file first.'
+    return
+  end
+
+  -- Simplified command construction and execution
+  -- Assumes 'python3.11 -m black' is correct and basic options are sufficient.
+  -- Uses :! which is simpler to write but less robust than vim.system
+  -- Note: vim.fn.shellescape is still crucial for filenames with spaces/symbols!
+  local cmd = string.format(
+    ':silent !python3.11 -m black -q --line-length 79 --skip-string-normalization --line-ranges %d-%d %s',
+    start_line,
+    end_line,
+    vim.fn.shellescape(file_path) -- Essential for safety
+  )
+
+  -- Run the command; :silent suppresses command output unless there's an error
+  vim.cmd(cmd)
+
+  -- Check if file changed on disk and prompt to reload if it did.
+  -- If black failed, this will likely do nothing.
+  vim.cmd 'checktime'
+end
+
+-- Set the keymap in visual mode
+vim.keymap.set('v', '<leader>b', format_visual_black, {
+  noremap = true,
+  silent = true, -- Keymap itself is silent; :! might still show errors
+  desc = 'Format selection with Black (--line-ranges, simple)',
+})
+
 -- Execute current line in lua
 vim.keymap.set('n', '<space>X', ':.lua<CR>')
 -- Execute selected lines in lua
