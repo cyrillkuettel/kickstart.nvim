@@ -825,22 +825,60 @@ require('lazy').setup({
         -- gopls = {},
         --
         --
-        -- I actually only use basedpyright for go to definition and the like.
-        -- For type checking we use mypy and we use ruff for linting.
-        -- We might sometime get rid of this here but for now we use it.
+        -- For type checking we use mypy. So I only need basedpyright for
+        -- auto resolving imports, go to definition and the like.
         -- This will overwrite the project specific settings
         basedpyright = {
           enabled = true,
           settings = {
-            disableOrganizeImports = false,
             basedpyright = {
               analysis = {
-                typeCheckingMode = 'off', -- Using mypy
-                diagnosticMode = 'openFilesOnly',
-                inlayHints = {
-                  callArgumentNames = true,
+                typeshedPaths = { '/home/cyrill/onegov-cloud/stubs' },
+
+                -- Enable a basic level of checking, else auto import won't work.
+                -- basedpyright very intrusive with errors, this calms it down
+                typeCheckingMode = 'standard',
+
+                reportMissingSuperCall = 'none',
+
+                inlayHints = { callArgumentNames = true },
+
+                diagnosticSeverityOverrides = {
+
+                  -- *** : Turn OFF reporting for specific type errors ***
+                  -- See 'Type Check Rule Overrides': https://docs.basedpyright.com/latest/configuration/config-files/
+                  reportAny = false,
+                  reportMissingTypeArgument = false,
+                  reportMissingTypeStubs = false,
+                  reportUnknownArgumentType = false,
+                  reportUnknownMemberType = false,
+                  reportUnknownParameterType = false,
+                  reportUnknownVariableType = false,
+                  reportUnusedCallResult = false,
+                  reportGeneralTypeIssues = 'none',
+                  reportPropertyTypeMismatch = 'none',
+                  reportFunctionMemberAccess = 'none',
+                  reportMissingParameterType = 'none',
+                  reportIncompatibleMethodOverride = 'none',
+                  reportIncompatibleVariableOverride = 'none',
+                  reportInconsistentConstructor = 'none',
+                  reportAssignmentType = 'none',
+                  reportAttributeAccessIssue = 'none',
                 },
+
                 useLibraryCodeForTypes = true,
+
+                -- You might want to keep these 'warning'/'error' or remove the lines
+                -- reportUndefinedVariable = 'warning',
+                -- reportMissingImports = 'warning',
+                -- reportUnusedImport = 'warning',
+              },
+              -- verboseOutput = true, -- Keep for debugging if needed
+            },
+            -- Ignore all files for analysis to exclusively use Ruff for linting
+            python = {
+              analysis = {
+                ignore = { '*' },
               },
             },
           },
@@ -906,6 +944,29 @@ require('lazy').setup({
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
+            --
+            local function configure_dynamic_typeshed_paths(server_config)
+              -- Get the root directory
+              local root_dir = require('lspconfig.util').find_git_ancestor(vim.fn.getcwd())
+              local stubs_path = root_dir .. '/stubs'
+
+              -- Check if stubs directory exists
+              if vim.fn.isdirectory(stubs_path) == 1 then
+                -- Create settings structure if it doesn't exist
+                server_config.settings = server_config.settings or {}
+                server_config.settings.basedpyright = server_config.settings.basedpyright or {}
+                server_config.settings.basedpyright.analysis = server_config.settings.basedpyright.analysis or {}
+                -- Set the typeshedPaths
+                server_config.settings.basedpyright.analysis.typeshedPaths = { stubs_path }
+              end
+
+              return server_config
+            end
+
+            -- Apply the configuration for basedpyright
+            if server_name == 'basedpyright' and server.enabled ~= false then
+              server = configure_dynamic_typeshed_paths(server)
+            end
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
