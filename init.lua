@@ -944,29 +944,6 @@ require('lazy').setup({
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            --
-            local function configure_dynamic_typeshed_paths(server_config)
-              -- Get the root directory
-              local root_dir = require('lspconfig.util').find_git_ancestor(vim.fn.getcwd())
-              local stubs_path = root_dir .. '/stubs'
-
-              -- Check if stubs directory exists
-              if vim.fn.isdirectory(stubs_path) == 1 then
-                -- Create settings structure if it doesn't exist
-                server_config.settings = server_config.settings or {}
-                server_config.settings.basedpyright = server_config.settings.basedpyright or {}
-                server_config.settings.basedpyright.analysis = server_config.settings.basedpyright.analysis or {}
-                -- Set the typeshedPaths
-                server_config.settings.basedpyright.analysis.typeshedPaths = { stubs_path }
-              end
-
-              return server_config
-            end
-
-            -- Apply the configuration for basedpyright
-            if server_name == 'basedpyright' and server.enabled ~= false then
-              server = configure_dynamic_typeshed_paths(server)
-            end
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
