@@ -3,85 +3,44 @@ return {
     'FabijanZulj/blame.nvim',
     lazy = false,
     config = function()
-      local blame = require 'blame'
-
-      -- Define highlight groups with different intensities
-      vim.api.nvim_command 'highlight BlameRecent guifg=#50fa7b gui=bold' -- Bright green for very recent
-      vim.api.nvim_command 'highlight BlameDaysOld guifg=#8be9fd' -- Cyan for days old
-      vim.api.nvim_command 'highlight BlameWeeksOld guifg=#bd93f9' -- Purple for weeks old
-      vim.api.nvim_command 'highlight BlameMonthsOld guifg=#ff79c6' -- Pink for months old
-      vim.api.nvim_command 'highlight BlameOld guifg=#6272a4' -- Dim blue for old commits
-
-      -- Define custom format function with age-based coloring and no commit hash
-      local function age_colored_format_fn(line_porcelain, config, idx)
-        local hash = string.sub(line_porcelain.hash, 0, 7)
-        local line_with_hl = {}
-        local is_commited = hash ~= '0000000'
-
-        if is_commited then
-          -- Extract only the first name from the author
-          local first_name = string.match(line_porcelain.author, '^(%S+)')
-
-          -- Determine age of commit for coloring
-          local commit_time = line_porcelain.committer_time
-          local current_time = os.time()
-          local age_in_days = (current_time - commit_time) / (60 * 60 * 24)
-
-          -- Choose highlight group based on age
-          local highlight
-          if age_in_days < 2 then
-            highlight = 'BlameRecent' -- Less than 2 days old
-          elseif age_in_days < 7 then
-            highlight = 'BlameDaysOld' -- Less than a week old
-          elseif age_in_days < 30 then
-            highlight = 'BlameWeeksOld' -- Less than a month old
-          elseif age_in_days < 90 then
-            highlight = 'BlameMonthsOld' -- Less than 3 months old
-          else
-            highlight = 'BlameOld' -- Older than 3 months
-          end
-
-          line_with_hl = {
-            idx = idx,
-            values = {
-              {
-                textValue = os.date(config.date_format, commit_time),
-                hl = highlight,
-              },
-              {
-                textValue = first_name or line_porcelain.author,
-                hl = highlight,
-              },
-            },
-            format = '%s  %s',
-          }
-        else
-          line_with_hl = {
-            idx = idx,
-            values = {
-              {
-                textValue = 'Not commited',
-                hl = 'Comment',
-              },
-            },
-            format = '%s',
-          }
-        end
-        return line_with_hl
+      local blame = require('blame')
+      
+      -- Custom format function with first name only, no revision
+      local function first_name_date_fn(line_porcelain, config, idx)
+        -- Extract first name only
+        local first_name = string.match(line_porcelain.author, '^(%S+)')
+        local date = os.date(config.date_format, line_porcelain.author_time)
+        
+        return {
+          idx = idx,
+          values = {
+            { textValue = date, hl = 'Blame' .. line_porcelain.hash },
+            { textValue = first_name, hl = 'Blame' .. line_porcelain.hash }
+          },
+          format = '%s (%s)'  -- Format: date (first_name)
+        }
       end
-
-      blame.setup {
+      
+      -- Define highlight groups with different intensities
+      vim.api.nvim_command('highlight BlameRecent guifg=#50fa7b gui=bold')
+      vim.api.nvim_command('highlight BlameDaysOld guifg=#8be9fd')
+      vim.api.nvim_command('highlight BlameWeeksOld guifg=#bd93f9')
+      vim.api.nvim_command('highlight BlameMonthsOld guifg=#ff79c6')
+      vim.api.nvim_command('highlight BlameOld guifg=#6272a4')
+      
+      blame.setup({
         date_format = '%d.%m.%Y',
-        virtual_style = 'left_align',
+        virtual_style = 'float',
         focus_blame = true,
         merge_consecutive = false,
         max_summary_width = 30,
         colors = nil,
         blame_options = nil,
         commit_detail_view = 'vsplit',
-        format_fn = age_colored_format_fn,
-      }
+        format_fn = first_name_date_fn
+      })
     end,
   },
-  vim.keymap.set('n', '<leader>g', ':BlameToggle virtual<CR>', { noremap = true, silent = true }),
+  vim.keymap.set('n', '<leader>g', ':BlameToggle virtual<CR>', 
+                 { noremap = true, silent = true }),
 }
