@@ -585,9 +585,8 @@ require('lazy').setup({
       vim.keymap.set('n', ',sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', ',sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
-      vim.keymap.set({ 'n', 'i' }, '<A-4>', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
-
-      vim.keymap.set('n', ',,', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+      vim.keymap.set('n', '<A-F4>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       --
       -- Use s for the fastes available search.
       vim.keymap.set('n', 's', '/', { desc = 'Search' })
