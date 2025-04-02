@@ -2,7 +2,7 @@ return {
   -- src: https://github.com/pocco81/auto-save.nvim
   'Pocco81/auto-save.nvim',
   opts = {
-    enabled = false,
+    enabled = true,
     execution_message = {
       message = function() -- message to print on save
         return ('AutoSave: saved at ' .. vim.fn.strftime '%H:%M:%S')
@@ -24,7 +24,16 @@ return {
       return false -- can't save
     end,
     write_all_buffers = false, -- write all buffers when the current one meets `condition`
-    debounce_delay = 135, -- saves the file at most every `debounce_delay` milliseconds
+    debounce_delay = function()
+      -- Get current filetype
+      local filetype = vim.bo.filetype
+
+      if filetype == 'lua' then
+        return 3000 -- 3 seconds for Lua files
+      else
+        return 5000 -- Default for other files (milliseconds)
+      end
+    end, -- saves the file at most every `debounce_delay` milliseconds
     callbacks = { -- functions to be executed at different intervals
       enabling = nil, -- ran when enabling auto-save
       disabling = nil, -- ran when disabling auto-save
