@@ -1,6 +1,7 @@
 return {
   -- src: https://github.com/pocco81/auto-save.nvim
-  'Pocco81/auto-save.nvim',
+  -- Fixes a bug with auto formatting messing up undo
+  'wbjin/auto-save.nvim',
   opts = {
     enabled = true,
     execution_message = {
@@ -10,7 +11,7 @@ return {
       dim = 0.18, -- dim the color of `message`
       cleaning_interval = 1250, -- (milliseconds) automatically clean MsgArea after displaying `message`. See :h MsgArea
     },
-    trigger_events = { 'InsertLeave', 'TextChanged' }, -- vim events that trigger auto-save. See :h events
+    trigger_events = { 'InsertLeave' }, -- vim events that trigger auto-save. See :h events. Removed 'TextChanged' to preserve undo history.
     -- function that determines whether to save the current buffer or not
     -- return true: if buffer is ok to be saved
     -- return false: if it's not ok to be saved

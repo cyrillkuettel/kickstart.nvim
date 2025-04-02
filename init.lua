@@ -983,6 +983,8 @@ require('lazy').setup({
         return {
           timeout_ms = 500,
           lsp_format = lsp_format_opt,
+          -- This undojoin is useful because of the autosave plugin + format on save. It will undo the last change AND the formatting, which is what you generaly want.
+          undojoin = true,
         }
       end,
       formatters_by_ft = {
