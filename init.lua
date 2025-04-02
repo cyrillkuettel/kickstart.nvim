@@ -885,6 +885,10 @@ require('lazy').setup({
           enabled = true,
           settings = {
             logLevel = 'info',
+            rules = {
+              -- The 'line too long' and similar linting errors, these are automatically fixable, so 't report errors for that.
+              ignore = { 'W293', 'E303' },
+            },
           },
         },
 
