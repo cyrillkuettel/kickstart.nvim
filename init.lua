@@ -81,6 +81,12 @@ vim.opt.expandtab = true
 -- Smart indenting
 vim.opt.smartindent = true
 vim.opt.autoindent = true
+
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
+vim.opt.undofile = true
+
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
