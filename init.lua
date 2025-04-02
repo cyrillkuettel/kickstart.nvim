@@ -207,6 +207,9 @@ vim.keymap.set('v', '<leader>b', format_visual_black, {
   desc = 'Format selection with Black (--line-ranges, simple)',
 })
 
+vim.keymap.set('n', ':', '<cmd>FineCmdline<CR>')
+vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { desc = 'Make it rain animation' })
+
 -- Execute current line in lua
 vim.keymap.set('n', '<space>X', ':.lua<CR>')
 -- Execute selected lines in lua
@@ -384,6 +387,16 @@ require('lazy').setup({
 
   {
     'michaeljsmith/vim-indent-object',
+    lazy = false,
+  },
+  { -- Nice looking floating command line
+    'VonHeikemen/fine-cmdline.nvim',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+    },
+  },
+  {
+    'eandrju/cellular-automaton.nvim',
     lazy = false,
   },
   {
