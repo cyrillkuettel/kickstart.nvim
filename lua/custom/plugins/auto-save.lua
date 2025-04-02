@@ -1,6 +1,6 @@
 return {
   -- src: https://github.com/pocco81/auto-save.nvim
-  'Pocco81/auto-save.nvim',
+  'pocco81/auto-save.nvim',
   opts = {
     enabled = true,
     execution_message = {
