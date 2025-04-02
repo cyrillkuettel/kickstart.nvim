@@ -1,6 +1,7 @@
 return {
   -- src: https://github.com/pocco81/auto-save.nvim
-  'pocco81/auto-save.nvim',
+  -- Fixes a bug with auto formatting messing up undo
+  'wbjin/auto-save.nvim',
   opts = {
     enabled = true,
     execution_message = {
