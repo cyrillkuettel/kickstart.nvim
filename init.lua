@@ -82,6 +82,17 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 vim.opt.autoindent = true
 
+vim.opt.incsearch = true
+
+vim.api.nvim_create_autocmd('FileType', {
+  -- I used to have this, but I actuallly only care about 80 char limit in python files
+  -- vim.opt.colorcolumn = '80'
+  pattern = 'python',
+  callback = function()
+    vim.opt_local.colorcolumn = '80'
+  end,
+})
+
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
