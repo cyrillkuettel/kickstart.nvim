@@ -598,6 +598,14 @@ require('lazy').setup({
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
 
+      vim.keymap.set('n', ',gn', function()
+        local config_dir = vim.fn.stdpath 'config'
+        require('telescope.builtin').live_grep {
+          prompt_title = 'Search Neovim Config',
+          cwd = config_dir,
+        }
+      end, { desc = 'Grep in Neovim config files' })
+
       vim.keymap.set('n', '<space>ep', function() -- edit packages
         builtin.find_files {
           cwd = vim.fs.joinpath(vim.fn.stdpath 'data', 'lazy'),
