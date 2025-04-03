@@ -217,6 +217,9 @@ local function format_visual_black()
   vim.cmd 'checktime'
 end
 
+-- 😎 Deal with it
+vim.keymap.set('n', '<space>', 'ciw', { desc = 'Change inner word' })
+
 -- Set the keymap in visual mode
 vim.keymap.set('v', '<leader>b', format_visual_black, {
   noremap = true,
@@ -594,12 +597,6 @@ require('lazy').setup({
           cwd = config_dir,
         }
       end, { desc = 'Grep in Neovim config files' })
-
-      vim.keymap.set('n', '<space>ep', function() -- edit packages
-        builtin.find_files {
-          cwd = vim.fs.joinpath(vim.fn.stdpath 'data', 'lazy'),
-        }
-      end, { desc = '[S]earch [N]eovim files' })
     end,
   },
 
