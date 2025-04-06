@@ -290,6 +290,20 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
+-- Use vertical split for vim help
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*.txt',
+  callback = function()
+    if vim.bo.buftype == 'help' and vim.fn.winnr '$' > 1 then
+      -- Only attempt to move the window if there are multiple windows
+      -- and we're not in the process of closing
+      pcall(function()
+        vim.cmd 'wincmd L'
+      end)
+    end
+  end,
+})
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
