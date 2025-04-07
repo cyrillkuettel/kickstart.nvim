@@ -536,6 +536,12 @@ require('lazy').setup({
               return { '--fixed-strings' }
             end,
           },
+          oldfiles = {
+            -- Limit the number of oldfiles shown
+            cwd_only = true, -- Set to true if you only want files from current directory
+            limit = 10,
+            results_per_page = 10
+          }
         },
         extensions = {
           ['ui-select'] = {
