@@ -240,6 +240,17 @@ vim.keymap.set('n', '<S-Tab>', ':Neotree toggle<CR>', { noremap = true, silent =
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and stay in visual mode' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
 
+--  Alt + Shift + I  for my favorite navigation.
+-- Remove all the Ctrl+I and Ctrl+O mappings first
+-- This makes Alt+Shift+O jump forward (opposite of normal Ctrl+O)
+vim.keymap.set('n', '<A-S-o>', function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-i>', true, true, true), 'n', false)
+end, { noremap = true, silent = true, desc = 'Jump forward in jump list' })
+-- This makes Alt+Shift+I jump backward (opposite of normal Ctrl+I)
+vim.keymap.set('n', '<A-S-i>', function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-o>', true, true, true), 'n', false)
+end, { noremap = true, silent = true, desc = 'Jump backward in jump list' })
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
