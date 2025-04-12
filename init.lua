@@ -230,12 +230,7 @@ vim.keymap.set('v', '<leader>b', format_visual_black, {
 vim.keymap.set('n', ':', '<cmd>FineCmdline<CR>')
 vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { desc = 'Make it rain animation' })
 
--- Execute current line in lua
-vim.keymap.set('n', '<space>X', ':.lua<CR>')
--- Execute selected lines in lua
-vim.keymap.set('v', '<space>X', ':lua<CR>')
-
-vim.keymap.set('n', '<S-Tab>', ':Neotree toggle<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<S-Tab>', ':Neotree focus<CR>', { noremap = true, silent = true })
 
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and stay in visual mode' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
