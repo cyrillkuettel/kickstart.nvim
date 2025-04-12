@@ -15,7 +15,7 @@ return {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
-    close_if_last_window = false, -- Don't close Neo-tree if it's the last window
+    close_if_last_window = true, -- Close Neo-tree if it's the last window
     filesystem = {
       window = {
         -- Keep the default mapping to close with \
