@@ -220,7 +220,7 @@ vim.keymap.set('v', '<leader>b', format_visual_black, {
 vim.keymap.set('n', ':', '<cmd>FineCmdline<CR>')
 vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { desc = 'Make it rain animation' })
 
-vim.keymap.set('n', '<S-Tab>', ':Neotree focus<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<S-Tab>', ':Neotree toggle reveal<CR>', { noremap = true, silent = true, desc = 'Toggle NeoTree reveal' })
 
 -- Another escape key
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode with jk' })
