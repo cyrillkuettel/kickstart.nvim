@@ -50,14 +50,14 @@ return {
   config = function(_, opts)
     -- Ensure Neo-tree is setup with the options
     require('neo-tree').setup(opts)
-    
+
     -- Auto-open Neo-tree at startup
-    vim.api.nvim_create_autocmd("VimEnter", {
+    vim.api.nvim_create_autocmd('VimEnter', {
       callback = function()
         vim.defer_fn(function()
-          vim.cmd("Neotree show")
+          vim.cmd 'Neotree show'
         end, 10)
-      end
+      end,
     })
   end,
 }

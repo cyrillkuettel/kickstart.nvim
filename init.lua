@@ -159,7 +159,6 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
-
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -167,27 +166,11 @@ vim.opt.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-vim.api.nvim_create_user_command('PyrightOrganizeImports', function()
-  local params = {
-    command = 'basedpyright.organizeimports',
-    arguments = { vim.uri_from_bufnr(0) },
-  }
 
-  -- Get the basedpyright client
-  local util = require 'lspconfig.util'
-  local clients = util.get_lsp_clients {
-    bufnr = vim.api.nvim_get_current_buf(),
-    name = 'basedpyright',
-  }
-
-  -- Send the request to each client
-  for _, client in ipairs(clients) do
-    client.request('workspace/executeCommand', params, nil, 0)
-  end
-end, {})
-
--- Simpler function to format visual selection with black --line-ranges
+-- Format visual selection with black --line-ranges
 local function format_visual_black()
+  -- Todo: it would be more performant if this made a request to blackd server.
+  -- Currently I assume this creates new process (!) every time you run format.
   local start_line = vim.fn.line "'<"
   local end_line = vim.fn.line "'>"
   local file_path = vim.fn.expand '%:p' -- Get full path
@@ -217,8 +200,15 @@ local function format_visual_black()
   vim.cmd 'checktime'
 end
 
--- 😎 Deal with it
+-- Deal with it 😎😎😎
 vim.keymap.set('n', '<space>', 'ciw', { desc = 'Change inner word' })
+
+vim.keymap.set('n', '<leader>g', ':BlameToggle virtual<CR>', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
+vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
+vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
 
 -- Set the keymap in visual mode
 vim.keymap.set('v', '<leader>b', format_visual_black, {
@@ -232,6 +222,8 @@ vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { 
 
 vim.keymap.set('n', '<S-Tab>', ':Neotree focus<CR>', { noremap = true, silent = true })
 
+-- Another escape key
+vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode with jk' })
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and stay in visual mode' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
 
@@ -268,12 +260,6 @@ end, { desc = 'Switch Colorscheme' })
 
 vim.keymap.set('n', '<leader>cs', ':ColorSchemeSwitch<CR>', { desc = 'Switch Colorscheme' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
@@ -283,6 +269,8 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('n', 'Q', '<nop>')
+vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
 -- Use vertical split for vim help
@@ -377,18 +365,30 @@ require('lazy').setup({
   --
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
-
+  --
+  change_detection = {
+    -- Try to avoid this annoying red message appearing form lazy
+    -- Happens every time I change a nvim config.
+    enabled = false,
+    notify = false,
+  },
   -- The dependencies are proper plugin specifications as well - anything
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
-  --
 
   -- [cyrill]
-
   {
     'michaeljsmith/vim-indent-object',
     lazy = false,
+  },
+  {
+    'nvim-telescope/telescope-frecency.nvim',
+    -- install the latest stable version
+    version = '*',
+    config = function()
+      require('telescope').load_extension 'frecency'
+    end,
   },
   { -- Nice looking floating command line
     'VonHeikemen/fine-cmdline.nvim',
@@ -534,9 +534,7 @@ require('lazy').setup({
           oldfiles = {
             -- Limit the number of oldfiles shown
             cwd_only = true, -- Set to true if you only want files from current directory
-            limit = 10,
-            results_per_page = 10
-          }
+          },
         },
         extensions = {
           ['ui-select'] = {
@@ -564,11 +562,57 @@ require('lazy').setup({
 
       local delta_commits = previewers.new_termopen_previewer {
         get_command = function(entry)
-          return { 'git', '-c', 'core.pager=delta', '-c', 'delta.side-by-side=false', 'diff', entry.value .. '^!', '--', entry.current_file }
+          if not entry or not entry.value then
+            return { 'echo', 'Invalid commit entry' }
+          end
+
+          -- We need to make sure the current_file path is relative to the git root
+          if not entry.current_file then
+            return { 'echo', 'No file specified' }
+          end
+
+          -- Get absolute path of the current file directory
+          local current_file_dir = vim.fn.expand '%:p:h' -- Changed quotes to double quotes
+
+          -- Find the git root
+          local git_root_command = 'git -C "' .. current_file_dir .. '" rev-parse --show-toplevel 2>/dev/null'
+          local git_root = vim.fn.system(git_root_command):gsub('\n', '')
+
+          if vim.v.shell_error ~= 0 then
+            return { 'echo', 'Not in a git repository' }
+          end
+
+          -- Change to the git root directory and run the diff command there
+          local cmd = {
+            'sh',
+            '-c',
+            'cd "'
+              .. git_root
+              .. '" && '
+              .. 'git -c core.pager=delta -c delta.side-by-side=false diff '
+              .. entry.value
+              .. '^! -- "'
+              .. entry.current_file
+              .. '"',
+          }
+
+          return cmd
         end,
       }
+
       local my_git_commits = function(opts)
         opts = opts or {}
+        -- Get the directory of the currently open file
+        local current_file_dir = vim.fn.expand '%:p:h' -- Changed quotes to double quotes
+        -- Check if we're in a git repository *relative to the file*
+        local git_root_command_string = 'git -C "' .. current_file_dir .. '" rev-parse --show-toplevel 2>/dev/null'
+        local git_root = vim.fn.system(git_root_command_string):gsub('\n', '')
+        if vim.v.shell_error ~= 0 then
+          vim.notify('Not in a git repository (for the current file)', vim.log.levels.WARN)
+          return
+        end
+        -- Set the cwd option to the git root directory
+        opts.cwd = git_root
         opts.previewer = {
           delta_commits,
           previewers.git_commit_message.new(opts),
@@ -576,15 +620,22 @@ require('lazy').setup({
         }
         builtin.git_commits(opts)
       end
-      vim.keymap.set('n', ',gc', my_git_commits, { desc = '[G]it [C]commits' })
+      vim.keymap.set('n', ',gc', my_git_commits, { desc = '[G]it [C]ommits' })
 
       vim.keymap.set('n', ',gs', builtin.git_status, { desc = '[G]it [S]tatus' })
 
       vim.keymap.set('n', ',sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', ',rs', builtin.resume, { desc = '[S]earch [R]esume' })
 
-      vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
-      vim.keymap.set('n', '<A-F4>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      -- vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+      vim.keymap.set(
+        { 'n', 'i' },
+        ',,',
+        '<cmd>Telescope frecency workspace=CWD path_display={"shorten"} theme=ivy<CR>',
+        { noremap = true, silent = true, desc = 'Recent files' }
+      )
+
+      vim.keymap.set('n', '<A-4>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       --
       -- Use s for the fastes available search.
       vim.keymap.set('n', 's', '/', { desc = 'Search' })
@@ -875,12 +926,6 @@ require('lazy').setup({
               },
               -- verboseOutput = true, -- Keep for debugging if needed
             },
-            -- Ignore all files for analysis to exclusively use Ruff for linting
-            python = {
-              analysis = {
-                ignore = { '*' },
-              },
-            },
           },
         },
         ruff = {
@@ -960,16 +1005,7 @@ require('lazy').setup({
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
+    keys = {},
     opts = {
       notify_on_error = true,
       format_on_save = function(bufnr)
@@ -996,7 +1032,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        python = { 'ruff_fix' },
+        -- python = { 'ruff_fix' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
@@ -1018,6 +1054,7 @@ require('lazy').setup({
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
           -- {
+          -- : try this out
           --   'rafamadriz/friendly-snippets',
           --   config = function()
           --     require('luasnip.loaders.from_vscode').lazy_load()
@@ -1115,6 +1152,18 @@ require('lazy').setup({
     end,
   },
 
+  --[[
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 900,
+    config = function()
+      vim.notify('Gruvbox config function is being executed!', vim.log.levels.INFO)
+      vim.o.background = 'dark' -- or "light" for light mode
+      vim.cmd 'colorscheme gruvbox' -- Add this line here
+    end,
+    opts = ...,
+  },
+]]
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -1133,14 +1182,14 @@ require('lazy').setup({
       vim.cmd.hi 'Normal guibg=#1c1c1c ctermbg=234'
 
       -- Set the color for plain text
-      vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
+      -- vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
 
       -- Try to override imports
-      vim.cmd.hi 'Include guifg=#FFFFFF ctermfg=15'
-      vim.cmd.hi 'PreProc guifg=#FFFFFF ctermfg=15' -- This often controls import styling
+      --vim.cmd.hi 'Include guifg=#FFFFFF ctermfg=15'
+      --vim.cmd.hi 'PreProc guifg=#FFFFFF ctermfg=15' -- This often controls import styling
 
       -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+      -- vim.cmd.hi 'Comment gui=none'
     end,
   },
 
