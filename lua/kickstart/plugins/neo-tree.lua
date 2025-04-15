@@ -9,10 +9,12 @@ return {
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
-  lazy = false, -- Load at startup instead of lazy loading
+  cmd = 'Neotree', -- Load when Neotree command is executed
   keys = {
     -- Keep the reveal keymap, it's still useful
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    -- Add a keymap to toggle the tree easily if needed
+    { '<leader>e', ':Neotree toggle<CR>', desc = 'Toggle NeoTree', silent = true },
   },
   opts = {
     close_if_last_window = true, -- Close Neo-tree if it's the last window
@@ -39,25 +41,8 @@ return {
     git_status = {
       follow_current_file = { enabled = true }, -- Also follow in git status source
     },
-    -- Set this to true to automatically open Neo-tree at startup
-    open_on_startup = true,
-    -- Enable global follow current file
-    follow_current_file = {
-      enabled = true,
-      leave_dirs_open = true,
-    },
+    -- Removed open_on_startup = true
+    -- Removed global follow_current_file
   },
-  config = function(_, opts)
-    -- Ensure Neo-tree is setup with the options
-    require('neo-tree').setup(opts)
-
-    -- Auto-open Neo-tree at startup
-    vim.api.nvim_create_autocmd('VimEnter', {
-      callback = function()
-        vim.defer_fn(function()
-          vim.cmd 'Neotree show'
-        end, 10)
-      end,
-    })
-  end,
+  -- Removed config function, lazy.nvim handles setup via opts
 }
