@@ -511,6 +511,10 @@ require('lazy').setup({
             n = {
               -- Bind Tab in normal mode
               ['<Tab>'] = focus_preview,
+              -- Paste from system clipboard
+              ['p'] = function()
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('"<C-r>+"', true, false, true), 'n', false)
+              end,
             },
           },
         },
