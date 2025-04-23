@@ -201,7 +201,7 @@ local function format_visual_black()
 end
 
 -- Deal with it 😎😎😎
-vim.keymap.set('n', '<space>', 'ciw', { desc = 'Change inner word' })
+vim.keymap.set('n', '<space>', '"_ciw', { desc = 'Change inner word' })
 
 vim.keymap.set('n', '<leader>g', ':BlameToggle virtual<CR>', { noremap = true, silent = true })
 
