@@ -618,14 +618,14 @@ require('lazy').setup({
       vim.keymap.set('n', ',rs', builtin.resume, { desc = '[S]earch [R]esume' })
 
       -- vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+      -- Using these two mainly for navigation
       vim.keymap.set(
         { 'n', 'i' },
         ',,',
         '<cmd>Telescope frecency workspace=CWD path_display={"shorten"} theme=ivy<CR>',
         { noremap = true, silent = true, desc = 'Recent files' }
       )
-
-      vim.keymap.set('n', '<A-4>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '..', builtin.buffers, { desc = '[ ] Find existing buffers' })
       --
       -- Use s for the fastes available search.
       vim.keymap.set('n', 's', '/', { desc = 'Search' })
