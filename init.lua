@@ -382,14 +382,6 @@ require('lazy').setup({
     'michaeljsmith/vim-indent-object',
     lazy = false,
   },
-  {
-    'nvim-telescope/telescope-frecency.nvim',
-    -- install the latest stable version
-    version = '*',
-    config = function()
-      require('telescope').load_extension 'frecency'
-    end,
-  },
   { -- Nice looking floating command line
     'VonHeikemen/fine-cmdline.nvim',
     dependencies = {
@@ -619,14 +611,8 @@ require('lazy').setup({
       vim.keymap.set('n', ',sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', ',rs', builtin.resume, { desc = '[S]earch [R]esume' })
 
-      -- vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+      vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
       -- Using these two mainly for navigation
-      vim.keymap.set(
-        { 'n', 'i' },
-        ',,',
-        '<cmd>Telescope frecency workspace=CWD path_display={"shorten"} theme=ivy<CR>',
-        { noremap = true, silent = true, desc = 'Recent files' }
-      )
       vim.keymap.set('n', '..', builtin.buffers, { desc = '[ ] Find existing buffers' })
       --
       -- Use s for the fastes available search.
