@@ -507,10 +507,12 @@ require('lazy').setup({
             i = {
               -- Bind Tab in insert mode
               ['<Tab>'] = focus_preview,
+              ['<c-d>'] = require('telescope.actions').delete_buffer,
             },
             n = {
               -- Bind Tab in normal mode
               ['<Tab>'] = focus_preview,
+              ['<c-d>'] = require('telescope.actions').delete_buffer,
             },
           },
         },
