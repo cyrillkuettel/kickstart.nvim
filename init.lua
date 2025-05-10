@@ -1293,6 +1293,20 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   { import = 'custom.plugins' },
   --
+  {
+    'joshuavial/aider.nvim',
+    opts = {
+      default_bindings = false, -- We are setting custom keymaps below
+      -- auto_manage_context = true, -- This is the default
+      -- debug = false, -- This is the default
+    },
+    config = function(_, opts)
+      require('aider').setup(opts)
+      vim.keymap.set('n', '<leader>Ao', ':AiderOpen<CR>', { noremap = true, silent = true, desc = 'Aider Open' })
+      vim.keymap.set('n', '<leader>Am', ':AiderAddModifiedFiles<CR>', { noremap = true, silent = true, desc = 'Aider Add Modified Files' })
+    end,
+  },
+  --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
