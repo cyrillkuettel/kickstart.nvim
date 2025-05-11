@@ -1314,13 +1314,13 @@ require('lazy').setup({
       local cmd_config2 = string.format('%s %s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_exp)
       local cmd_config3 = string.format('%s %s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_paid)
 
-      -- Original keymaps
-      vim.keymap.set('n', '<leader>Ao', ':AiderOpen<CR>', { noremap = true, silent = true, desc = 'Aider Open (default args)' })
-      vim.keymap.set('n', '<leader>Am', ':AiderAddModifiedFiles<CR>', { noremap = true, silent = true, desc = 'Aider Add Modified Files' })
+      vim.keymap.set('n', '<leader>a2', function()
+        vim.cmd('AiderOpen "' .. cmd_config2 .. '"')
+      end, { noremap = true, silent = true, desc = 'Aider: Gemini Exp (' .. model_exp .. ')' })
 
-      -- New keymaps for specific Aider configurations
-      vim.keymap.set('n', '<leader>A2', function() vim.cmd('AiderOpen "' .. cmd_config2 .. '"') end, { noremap = true, silent = true, desc = 'Aider: Gemini Exp (' .. model_exp .. ')' })
-      vim.keymap.set('n', '<leader>A3', function() vim.cmd('AiderOpen "' .. cmd_config3 .. '"') end, { noremap = true, silent = true, desc = 'Aider: Gemini Paid (' .. model_paid .. ')' })
+      vim.keymap.set('n', '<leader>a2', function()
+        vim.cmd('AiderOpen "' .. cmd_config3 .. '"')
+      end, { noremap = true, silent = true, desc = 'Aider: Gemini Paid (' .. model_paid .. ')' })
     end,
   },
   --
