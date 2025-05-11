@@ -1307,27 +1307,20 @@ require('lazy').setup({
       local aider_base_cmd_with_model_keyword = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model'
       local model_exp = 'gemini-2.5-pro-exp-03-25'
       local model_paid = 'gemini-2.5-pro-preview-03-25'
-      local model_commit_name = 'gemini-2.5-flash-preview-04-17'
 
-      local openrouter_prefix = 'openrouter/google/'
       local gemini_prefix = 'gemini/'
-      local openrouter_suffix = ':free'
 
       -- Construct full command strings for AiderOpen
-      local cmd_config1 = string.format('%s %s%s%s', aider_base_cmd_with_model_keyword, openrouter_prefix, model_exp, openrouter_suffix)
       local cmd_config2 = string.format('%s %s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_exp)
       local cmd_config3 = string.format('%s %s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_paid)
-      local cmd_commit = string.format('aider --commit --weak-model %s --no-show-model-warnings', model_commit_name)
 
       -- Original keymaps
       vim.keymap.set('n', '<leader>Ao', ':AiderOpen<CR>', { noremap = true, silent = true, desc = 'Aider Open (default args)' })
       vim.keymap.set('n', '<leader>Am', ':AiderAddModifiedFiles<CR>', { noremap = true, silent = true, desc = 'Aider Add Modified Files' })
 
       -- New keymaps for specific Aider configurations
-      vim.keymap.set('n', '<leader>A1', function() vim.cmd('AiderOpen "' .. cmd_config1 .. '"') end, { noremap = true, silent = true, desc = 'Aider: OR Free/Exp (' .. model_exp .. ')' })
       vim.keymap.set('n', '<leader>A2', function() vim.cmd('AiderOpen "' .. cmd_config2 .. '"') end, { noremap = true, silent = true, desc = 'Aider: Gemini Exp (' .. model_exp .. ')' })
       vim.keymap.set('n', '<leader>A3', function() vim.cmd('AiderOpen "' .. cmd_config3 .. '"') end, { noremap = true, silent = true, desc = 'Aider: Gemini Paid (' .. model_paid .. ')' })
-      vim.keymap.set('n', '<leader>Ac', function() vim.cmd('AiderOpen "' .. cmd_commit .. '"') end, { noremap = true, silent = true, desc = 'Aider: Commit (' .. model_commit_name .. ')' })
     end,
   },
   --
