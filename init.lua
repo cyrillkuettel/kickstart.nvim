@@ -1304,21 +1304,21 @@ require('lazy').setup({
       require('aider').setup(opts)
 
       -- Define Aider configurations based on the provided shell script logic
-      local aider_base_cmd_with_model_keyword = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model'
+      local aider_base_cmd_with_model_keyword = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model='
       local model_exp = 'gemini-2.5-pro-exp-03-25'
       local model_paid = 'gemini-2.5-pro-preview-03-25'
 
       local gemini_prefix = 'gemini/'
 
       -- Construct full command strings for AiderOpen
-      local cmd_config2 = string.format('%s %s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_exp)
-      local cmd_config3 = string.format('%s %s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_paid)
+      local cmd_config2 = string.format('%s%s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_exp)
+      local cmd_config3 = string.format('%s%s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_paid)
 
       vim.keymap.set('n', '<leader>a2', function()
         vim.cmd('AiderOpen "' .. cmd_config2 .. '"')
       end, { noremap = true, silent = true, desc = 'Aider: Gemini Exp (' .. model_exp .. ')' })
 
-      vim.keymap.set('n', '<leader>a2', function()
+      vim.keymap.set('n', '<leader>a3', function()
         vim.cmd('AiderOpen "' .. cmd_config3 .. '"')
       end, { noremap = true, silent = true, desc = 'Aider: Gemini Paid (' .. model_paid .. ')' })
     end,
