@@ -260,6 +260,17 @@ end, { desc = 'Switch Colorscheme' })
 
 vim.keymap.set('n', '<leader>cs', ':ColorSchemeSwitch<CR>', { desc = 'Switch Colorscheme' })
 
+-- Command to yank current absolute path of current buffer to clipboard
+vim.api.nvim_create_user_command('YankAbsolutePath', function()
+  local path = vim.fn.expand('%:p')
+  if path ~= '' then
+    vim.fn.setreg('+', path)
+    vim.notify('Copied to clipboard: ' .. path)
+  else
+    vim.notify('No file name to copy.', vim.log.levels.WARN)
+  end
+end, { desc = 'Yank absolute path of current buffer to clipboard' })
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
