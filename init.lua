@@ -270,6 +270,8 @@ vim.api.nvim_create_user_command('YankAbsolutePath', function()
     vim.notify('No file name to copy.', vim.log.levels.WARN)
   end
 end, { desc = 'Yank absolute path of current buffer to clipboard' })
+-- Keymap for YankAbsolutePath
+vim.keymap.set('n', '<leader>yp', '<cmd>YankAbsolutePath<CR>', { desc = '[Y]ank current buffer [P]ath' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
