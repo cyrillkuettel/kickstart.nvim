@@ -1,3 +1,16 @@
+Dependencies:
+Install uv:
+
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+We also need these: 
+```
+uv tool install basedpyright
+uv tool install ruff@latest\n
+```
+
+
 # kickstart.nvim
 
 ## Introduction
