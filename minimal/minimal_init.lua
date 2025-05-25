@@ -149,8 +149,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Load Monokai colorscheme
-vim.cmd 'set termguicolors' -- Recommended for modern colorschemes
-vim.cmd 'source /home/cyrill/fresh-install/vim/monokai.vim'
+-- output may be messing with terminal
+vim.opt.termguicolors = false
 vim.cmd 'colorscheme monokai'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
