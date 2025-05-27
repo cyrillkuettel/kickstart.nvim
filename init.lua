@@ -246,6 +246,26 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+vim.api.nvim_create_user_command('MakeLint', function()
+  -- Run linting and put things int quicklist
+  -- Requires you to have a makefile with 'make lint'
+  local old_makeprg = vim.o.makeprg
+  vim.o.makeprg = 'make lint'
+  local old_errorformat = vim.o.errorformat
+  vim.o.errorformat = '%f:%l:%c:%m,%f:%l:%m'
+
+  -- Run the command, put results in quickfix, and open the quickfix window
+  vim.cmd 'silent make! | cwindow'
+  vim.cmd 'redraw!' -- Refresh display
+  vim.o.makeprg = old_makeprg
+  vim.o.errorformat = old_errorformat
+end, { desc = 'Run "make lint" and show results in quickfix' })
+
+vim.keymap.set('n', '<leader>l', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' })
+-- Jump to next point in quickfix list, without leaving the window
+vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
+vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
