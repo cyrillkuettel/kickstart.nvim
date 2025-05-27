@@ -1191,7 +1191,7 @@ require('lazy').setup({
       vim.cmd.colorscheme 'monokai'
 
       -- Overwrite background color to be darker
-      vim.cmd.hi 'Normal guibg=#1c1c1c ctermbg=234'
+      vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
 
       -- Set the color for plain text
       -- vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
