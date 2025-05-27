@@ -218,7 +218,6 @@ vim.keymap.set('v', '<leader>b', format_visual_black, {
   desc = 'Format selection with Black (--line-ranges, simple)',
 })
 
-vim.keymap.set('n', ':', '<cmd>FineCmdline<CR>')
 vim.keymap.set('n', '<leader>fml', '<cmd>CellularAutomaton make_it_rain<CR>', { desc = 'Make it rain animation' })
 
 vim.keymap.set('n', '<S-Tab>', ':Neotree toggle reveal<CR>', { noremap = true, silent = true, desc = 'Toggle NeoTree reveal' })
@@ -283,7 +282,7 @@ vim.keymap.set('n', '<leader>cs', ':ColorSchemeSwitch<CR>', { desc = 'Switch Col
 
 -- Command to yank current absolute path of current buffer to clipboard
 vim.api.nvim_create_user_command('YankAbsolutePath', function()
-  local path = vim.fn.expand('%:p')
+  local path = vim.fn.expand '%:p'
   if path ~= '' then
     vim.fn.setreg('+', path)
     vim.notify('Copied to clipboard: ' .. path)
@@ -534,10 +533,19 @@ require('lazy').setup({
               -- Bind Tab in insert mode
               ['<Tab>'] = focus_preview,
               ['<c-d>'] = require('telescope.actions').delete_buffer,
+
+              ['<C-v>'] = require('telescope.actions').select_vertical,
+              ['<C-x>'] = require('telescope.actions').select_horizontal,
+              ['<C-t>'] = require('telescope.actions').select_tab,
             },
             n = {
               -- Bind Tab in normal mode
               ['<Tab>'] = focus_preview,
+
+              -- for opening in splits from normal mode
+              ['<C-v>'] = require('telescope.actions').select_vertical,
+              ['<C-x>'] = require('telescope.actions').select_horizontal,
+              ['<C-t>'] = require('telescope.actions').select_tab,
               ['<c-d>'] = require('telescope.actions').delete_buffer,
             },
           },
