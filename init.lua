@@ -1095,16 +1095,15 @@ require('lazy').setup({
         local disable_filetypes = { c = true, cpp = true, python = true }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
-          lsp_format_opt = 'never'
+          return nil
         else
-          lsp_format_opt = 'fallback'
+          return {
+            timeout_ms = 500,
+            lsp_format = lsp_format_opt,
+            -- This undojoin is useful because of the autosave plugin + format on save. It will undo the last change AND the formatting, which is what you generaly want.
+            undojoin = true,
+          }
         end
-        return {
-          timeout_ms = 500,
-          lsp_format = lsp_format_opt,
-          -- This undojoin is useful because of the autosave plugin + format on save. It will undo the last change AND the formatting, which is what you generaly want.
-          undojoin = true,
-        }
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
@@ -1397,7 +1396,7 @@ require('lazy').setup({
     'nekowasabi/aider.vim',
     dependencies = 'vim-denops/denops.vim',
     config = function()
-      vim.g.aider_command = 'aider --no-auto-commits'
+      vim.g.aider_command = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25'
       vim.g.aider_buffer_open_type = 'floating'
       vim.g.aider_floatwin_width = 100
       vim.g.aider_floatwin_height = 20
