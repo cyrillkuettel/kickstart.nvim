@@ -9,7 +9,7 @@ return {
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
-  cmd = 'Neotree', -- Load when Neotree command is executed
+  lazy = false, -- don't lazy-load neo-tree so netrw hijacking on startup works (#1489))
   keys = {
     -- Keep the reveal keymap, it's still useful
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
