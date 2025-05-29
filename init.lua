@@ -286,14 +286,25 @@ local function toggle_lazygit()
       style = 'minimal',
       border = 'rounded',
     })
-    vim.fn.termopen('lazygit', {
-      on_exit = function()
+
+    local chan_id = vim.api.nvim_open_term(buf, {})
+    vim.api.nvim_chan_send(chan_id, "lazygit\r")
+
+    vim.api.nvim_create_autocmd('TermClose', {
+      group = vim.api.nvim_create_augroup('LazygitTermClose', { clear = true }),
+      buffer = buf,
+      once = true,
+      callback = function()
         if lazygit_toggle_win and vim.api.nvim_win_is_valid(lazygit_toggle_win) then
+          -- Ensure we are closing the window that was indeed hosting this terminal.
+          -- The `buffer = buf` and `once = true` in autocmd definition,
+          -- plus `lazygit_toggle_win` being reset, should make this safe.
           vim.api.nvim_win_close(lazygit_toggle_win, true)
           lazygit_toggle_win = nil
         end
       end,
     })
+
     vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], { buffer = buf, noremap = true, silent = true })
     vim.keymap.set('t', 'q', [[<C-\><C-n>:close!<CR>]], { buffer = buf, noremap = true, silent = true })
   end
