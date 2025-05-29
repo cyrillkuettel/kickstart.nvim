@@ -1394,33 +1394,31 @@ require('lazy').setup({
   { import = 'custom.plugins' },
   --
   {
-    'joshuavial/aider.nvim',
-    opts = {
-      default_bindings = false, -- We are setting custom keymaps below
-      -- auto_manage_context = true, -- This is the default
-      -- debug = false, -- This is the default
-    },
-    config = function(_, opts)
-      require('aider').setup(opts)
+    'nekowasabi/aider.vim',
+    dependencies = 'vim-denops/denops.vim',
+    config = function()
+      vim.g.aider_command = 'aider --no-auto-commits'
+      vim.g.aider_buffer_open_type = 'floating'
+      vim.g.aider_floatwin_width = 100
+      vim.g.aider_floatwin_height = 20
 
-      -- Define Aider configurations based on the provided shell script logic
-      local aider_base_cmd_with_model_keyword = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model='
-      local model_exp = 'gemini-2.5-pro-exp-03-25'
-      local model_paid = 'gemini-2.5-pro-preview-03-25'
-
-      local gemini_prefix = 'gemini/'
-
-      -- Construct full command strings for AiderOpen
-      local cmd_config2 = string.format('%s%s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_exp)
-      local cmd_config3 = string.format('%s%s%s', aider_base_cmd_with_model_keyword, gemini_prefix, model_paid)
-
-      vim.keymap.set('n', '<leader>a2', function()
-        vim.cmd('AiderOpen "' .. cmd_config2 .. '"')
-      end, { noremap = true, silent = true, desc = 'Aider: Gemini Exp (' .. model_exp .. ')' })
-
-      vim.keymap.set('n', '<leader>a3', function()
-        vim.cmd('AiderOpen "' .. cmd_config3 .. '"')
-      end, { noremap = true, silent = true, desc = 'Aider: Gemini Paid (' .. model_paid .. ')' })
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'AiderOpen',
+        callback = function(args)
+          vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { buffer = args.buf })
+          vim.keymap.set('n', '<Esc>', '<cmd>AiderHide<CR>', { buffer = args.buf })
+        end,
+      })
+      vim.api.nvim_set_keymap('n', '<leader>at', ':AiderRun<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>aa', ':AiderAddCurrentFile<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>ar', ':AiderAddCurrentFileReadOnly<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>aw', ':AiderAddWeb<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>ax', ':AiderExit<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>ai', ':AiderAddIgnoreCurrentFile<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>aI', ':AiderOpenIgnore<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>aI', ':AiderPaste<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>ah', ':AiderHide<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('v', '<leader>av', ':AiderVisualTextWithPrompt<CR>', { noremap = true, silent = true })
     end,
   },
   --
