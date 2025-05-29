@@ -264,6 +264,42 @@ vim.keymap.set('n', '<leader>l', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' }
 vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
 
+-- Lazygit toggle
+local lazygit_toggle_win
+local function toggle_lazygit()
+  if lazygit_toggle_win and vim.api.nvim_win_is_valid(lazygit_toggle_win) then
+    vim.api.nvim_win_close(lazygit_toggle_win, true)
+    lazygit_toggle_win = nil
+  else
+    local width = math.floor(vim.o.columns * 0.8)
+    local height = math.floor(vim.o.lines * 0.8)
+    local row = math.floor((vim.o.lines - height) / 2)
+    local col = math.floor((vim.o.columns - width) / 2)
+
+    local buf = vim.api.nvim_create_buf(false, true)
+    lazygit_toggle_win = vim.api.nvim_open_win(buf, true, {
+      relative = 'editor',
+      width = width,
+      height = height,
+      row = row,
+      col = col,
+      style = 'minimal',
+      border = 'rounded',
+    })
+    vim.fn.termopen('lazygit', {
+      on_exit = function()
+        if lazygit_toggle_win and vim.api.nvim_win_is_valid(lazygit_toggle_win) then
+          vim.api.nvim_win_close(lazygit_toggle_win, true)
+          lazygit_toggle_win = nil
+        end
+      end,
+    })
+    vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], { buffer = buf, noremap = true, silent = true })
+    vim.keymap.set('t', 'q', [[<C-\><C-n>:close!<CR>]], { buffer = buf, noremap = true, silent = true })
+  end
+end
+vim.keymap.set('n', ',gg', toggle_lazygit, { desc = 'Toggle lazygit floating terminal' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
