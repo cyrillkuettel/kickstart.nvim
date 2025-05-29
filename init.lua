@@ -468,6 +468,10 @@ require('lazy').setup({
     },
     config = function()
       local focus_preview = function(prompt_bufnr)
+        -- This allows to edit text inside the telescope preview window.
+        -- Press TAB to cycle focus between search window and preview
+        -- Changes will be saved automatically
+
         local action_state = require 'telescope.actions.state'
         local picker = action_state.get_current_picker(prompt_bufnr)
         local prompt_win = picker.prompt_win
@@ -475,27 +479,30 @@ require('lazy').setup({
         local winid = previewer.state.winid
         local bufnr = previewer.state.bufnr
 
+        -- Auto-save on text changes
+        vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+          buffer = bufnr,
+          callback = function()
+            local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+            local entry = action_state.get_selected_entry()
+            if entry and entry.filename then
+              local filename = require('plenary.path'):new(entry.filename):normalize(vim.loop.cwd())
+              local real_buf = vim.fn.bufadd(filename)
+              vim.fn.bufload(real_buf)
+              vim.api.nvim_buf_call(real_buf, function()
+                vim.api.nvim_buf_set_lines(real_buf, 0, -1, false, lines)
+                vim.cmd.write()
+              end)
+            end
+          end,
+        })
+
         -- original focus mapping
         vim.keymap.set('n', '<Tab>', function()
           vim.cmd(string.format('noautocmd lua vim.api.nvim_set_current_win(%s)', prompt_win))
         end, { buffer = bufnr })
         vim.cmd(string.format('noautocmd lua vim.api.nvim_set_current_win(%s)', winid))
-
-        -- use <leader>w to save to real file in preview
-        vim.keymap.set('n', '<leader>w', function()
-          local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-          local entry = require('telescope.actions.state').get_selected_entry()
-          local filename = require('plenary.path'):new(entry.filename):normalize(vim.loop.cwd())
-          local real_buf = vim.fn.bufadd(filename)
-          vim.fn.bufload(real_buf)
-          vim.api.nvim_buf_call(real_buf, function()
-            vim.api.nvim_buf_set_lines(real_buf, 0, -1, false, lines)
-            vim.cmd.write()
-          end)
-        end, { buffer = bufnr })
-
-        -- api.nvim_set_current_win(winid)
-      end
+      end -- Closes focus_preview function
 
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
