@@ -183,18 +183,26 @@ local function format_visual_black()
   end
 
   -- Simplified command construction and execution
-  -- Assumes 'python3.11 -m black' is correct and basic options are sufficient.
-  -- Uses :! which is simpler to write but less robust than vim.system
   -- Note: vim.fn.shellescape is still crucial for filenames with spaces/symbols!
   local black_executable = vim.fn.executable('black') == 1 and 'black' or 'python3.11 -m black'
-  local cmd_template = ':silent !%s -q --line-length 79 --skip-string-normalization --line-ranges %d-%d %s'
-  local cmd = string.format(cmd_template, black_executable, start_line,
+  local cmd_parts = {
+    black_executable,
+    '-q',
+    '--line-length',
+    '79',
+    '--skip-string-normalization',
+    '--line-ranges',
+    string.format('%d-%d', start_line, end_line),
     end_line,
-    vim.fn.shellescape(file_path) -- Essential for safety
-  )
+    file_path, -- vim.fn.system handles shell escaping for individual arguments
+  }
 
-  -- Run the command; :silent suppresses command output unless there's an error
-  vim.cmd(cmd)
+  -- Run the command and capture output
+  local output = vim.fn.systemlist(cmd_parts)
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Black formatting failed:\n' .. table.concat(output, '\n'), vim.log.levels.ERROR)
+    return
+  end
 
   -- Check if file changed on disk and prompt to reload if it did.
   -- If black failed, this will likely do nothing.
