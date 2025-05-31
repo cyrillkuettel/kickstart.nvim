@@ -17,3 +17,4 @@ return {
     -- Any additional FireVim-specific settings can go here
   end,
 }
+
