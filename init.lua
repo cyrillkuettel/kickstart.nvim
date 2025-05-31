@@ -288,7 +288,7 @@ local function toggle_lazygit()
     })
 
     local chan_id = vim.api.nvim_open_term(buf, {})
-    vim.api.nvim_chan_send(chan_id, "lazygit\r")
+    vim.api.nvim_chan_send(chan_id, 'lazygit\r')
 
     vim.api.nvim_create_autocmd('TermClose', {
       group = vim.api.nvim_create_augroup('LazygitTermClose', { clear = true }),
