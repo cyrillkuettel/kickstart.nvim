@@ -186,9 +186,9 @@ local function format_visual_black()
   -- Assumes 'python3.11 -m black' is correct and basic options are sufficient.
   -- Uses :! which is simpler to write but less robust than vim.system
   -- Note: vim.fn.shellescape is still crucial for filenames with spaces/symbols!
-  local cmd = string.format(
-    ':silent !python3.11 -m black -q --line-length 79 --skip-string-normalization --line-ranges %d-%d %s',
-    start_line,
+  local black_executable = vim.fn.executable('black') == 1 and 'black' or 'python3.11 -m black'
+  local cmd_template = ':silent !%s -q --line-length 79 --skip-string-normalization --line-ranges %d-%d %s'
+  local cmd = string.format(cmd_template, black_executable, start_line,
     end_line,
     vim.fn.shellescape(file_path) -- Essential for safety
   )
