@@ -1,4 +1,3 @@
--- Maybe disable autosave for lua files, formating is anoying
 --
 -- 1. really really need more options for full text search in telescope
 -- Neotree show current file if neotree shown
@@ -184,7 +183,7 @@ local function format_visual_black()
 
   -- Simplified command construction and execution
   -- Note: vim.fn.shellescape is still crucial for filenames with spaces/symbols!
-  local black_executable = vim.fn.executable('black') == 1 and 'black' or 'python3.11 -m black'
+  local black_executable = vim.fn.executable 'black' == 1 and 'black' or 'python3.11 -m black'
   local cmd_parts = {
     black_executable,
     '-q',
@@ -1437,7 +1436,8 @@ require('lazy').setup({
     'nekowasabi/aider.vim',
     dependencies = 'vim-denops/denops.vim',
     config = function()
-      vim.g.aider_command = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25'
+      vim.g.aider_command =
+        'source ~/.bash_profile && /home/cyrill/.local/bin/aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25'
       vim.g.aider_buffer_open_type = 'floating'
       vim.g.aider_floatwin_width = 100
       vim.g.aider_floatwin_height = 20
@@ -1449,6 +1449,7 @@ require('lazy').setup({
           vim.keymap.set('n', '<Esc>', '<cmd>AiderHide<CR>', { buffer = args.buf })
         end,
       })
+      -- https://github.com/nekowasabi/aider.vim
       vim.api.nvim_set_keymap('n', '<leader>at', ':AiderRun<CR>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>aa', ':AiderAddCurrentFile<CR>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>ar', ':AiderAddCurrentFileReadOnly<CR>', { noremap = true, silent = true })
