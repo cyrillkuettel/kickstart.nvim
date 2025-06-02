@@ -14,7 +14,7 @@ return {
     -- Keep the reveal keymap, it's still useful
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
     -- Add a keymap to toggle the tree easily if needed
-    { '<leader>e', ':Neotree toggle<CR>', desc = 'Toggle NeoTree', silent = true },
+    { '<leader>nr', ':Neotree toggle<CR>', desc = 'Toggle NeoTree', silent = true },
   },
   opts = {
     close_if_last_window = true, -- Close Neo-tree if it's the last window
