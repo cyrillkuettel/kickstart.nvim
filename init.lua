@@ -1428,7 +1428,7 @@ require('lazy').setup({
           vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Exit terminal mode' })
           vim.keymap.set('n', '<Esc>', '<cmd>AiderHide<CR>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Hide window (Normal mode)' })
           -- Ensure F7 hides the Aider window when pressed from within Aider's terminal/normal/insert mode
-          vim.keymap.set({'t', 'n', 'i'}, '<F7>', '<cmd>AiderHide<CR>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Hide window' })
+          vim.keymap.set({ 't', 'n', 'i' }, '<F7>', '<cmd>AiderHide<CR>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Hide window' })
         end,
       })
       -- https://github.com/nekowasabi/aider.vim
