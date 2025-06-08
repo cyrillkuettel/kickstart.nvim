@@ -612,6 +612,14 @@ require('lazy').setup({
                 local current_line = picker:_get_prompt()
                 picker:set_prompt(current_line .. clipboard)
               end,
+              ['<C-a>'] = function(prompt_bufnr)
+                local selected_entries = action_state.get_selected_entries(prompt_bufnr)
+                if #selected_entries == 0 then
+                  selected_entries = { action_state.get_current_entry() }
+                end
+                actions.close(prompt_bufnr)
+                require('custom.aider_telescope').add_files_to_aider(selected_entries)
+              end,
             },
           },
         },
@@ -1425,6 +1433,11 @@ require('lazy').setup({
       vim.api.nvim_set_keymap('n', '<leader>aI', ':AiderOpenIgnore<CR>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>aI', ':AiderPaste<CR>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>ah', ':AiderHide<CR>', { noremap = true, silent = true })
+      vim.keymap.set('n', '<leader>ao', function()
+        require('telescope.builtin').oldfiles {
+          attach_mappings = require('custom.aider_telescope').aider_attach_mappings,
+        }
+      end, { desc = '[A]ider add [O]ldfiles' })
       vim.api.nvim_set_keymap('v', '<leader>av', ':AiderVisualTextWithPrompt<CR>', { noremap = true, silent = true })
     end,
   },
