@@ -42,7 +42,7 @@ return {
       blame.setup {
         date_format = '%d.%m.%Y',
         virtual_style = 'right_align',
-        focus_blame = true,
+        focus_blame = false,
         merge_consecutive = false,
         max_summary_width = 30,
         colors = explicit_colors,
