@@ -51,31 +51,5 @@ return {
       row = 0,
       col = 1,
     },
-    on_attach = function(bufnr)
-      local gitsigns = require 'gitsigns'
-
-      local function map(mode, l, r, opts)
-        opts = opts or {}
-        opts.buffer = bufnr
-        vim.keymap.set(mode, l, r, opts)
-      end
-
-      map('n', ',gs', gitsigns.stage_hunk, { desc = 'Git stage hunk' })
-      map('n', ',gr', gitsigns.reset_hunk, { desc = 'Git reset hunk' })
-      map('v', ',gs', function()
-        gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-      end, { desc = 'Git stage selected hunk' })
-      map('v', ',gr', function()
-        gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-      end, { desc = 'Git reset selected hunk' })
-      -- Blame
-      map('n', ',gb', function()
-        gitsigns.blame_line { full = true }
-      end, { desc = 'Git blame line' })
-      map('n', ',gB', gitsigns.toggle_current_line_blame, { desc = 'Git toggle line blame' })
-
-      -- Base command to open GitSigns menu
-      map('n', ',gg', '<cmd>Gitsigns<CR>', { desc = 'Open Gitsigns command' })
-    end,
   },
 }
