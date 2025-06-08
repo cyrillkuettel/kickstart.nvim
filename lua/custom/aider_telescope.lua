@@ -48,33 +48,17 @@ M.aider_attach_mappings = function(prompt_bufnr, map)
     end
   end)
 
-  map('i', '<C-a>', function() -- <C-a>: add all selected files (or current if none selected) and close Telescope
-    local current_picker_selected_entries = action_state.get_selected_entries(prompt_bufnr)
-    if #current_picker_selected_entries == 0 then
-      local current_entry = action_state.get_current_entry()
-      if current_entry then
-        current_picker_selected_entries = { current_entry }
-      end
-    end
-    actions.close(prompt_bufnr)
-    if #current_picker_selected_entries > 0 then
-      M.add_files_to_aider(current_picker_selected_entries)
-    end
-  end)
-
-  -- New mapping <C-x>: add current file and keep Telescope open
   local function add_current_entry_and_stay_open()
     local entry = action_state.get_selected_entry()
     if entry then
       M.add_files_to_aider { entry }
-      -- Telescope remains open; vim.notify from add_files_to_aider provides feedback.
     else
       vim.notify('No entry currently under cursor to add.', vim.log.levels.WARN)
     end
   end
 
-  map('i', '<C-x>', add_current_entry_and_stay_open)
-  map('n', '<C-x>', add_current_entry_and_stay_open)
+  map('i', '<C-p>', add_current_entry_and_stay_open)
+  map('n', '<C-p>', add_current_entry_and_stay_open)
   return true
 end
 
