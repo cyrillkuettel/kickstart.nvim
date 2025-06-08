@@ -288,44 +288,6 @@ _G.ToggleAiderWindow = function()
     vim.cmd 'AiderRun'
   end
 end
-
--- Function to add current file to Aider, clearing previous input
-_G.CustomAiderAddCurrentFile = function()
-  local filepath = vim.fn.expand '%:p'
-  if filepath == '' then
-    vim.notify('No file name to add.', vim.log.levels.WARN)
-    return
-  end
-
-  -- Check if Aider window is open and its terminal buffer/channel are known
-  if
-    not (
-      vim.g.aider_floatwin_id
-      and vim.api.nvim_win_is_valid(vim.g.aider_floatwin_id)
-      and vim.g.aider_terminal_bufnr
-      and vim.api.nvim_buf_is_valid(vim.g.aider_terminal_bufnr)
-      and vim.g.aider_channel_id
-      and vim.g.aider_channel_id ~= 0
-    )
-  then
-    -- If Aider is not fully ready (e.g. window not open, terminal buffer unknown, or channel invalid),
-    -- fall back to the original command. This handles cases where Aider is being newly opened.
-    vim.notify('Aider not fully initialized. Falling back to default add.', vim.log.levels.INFO)
-    vim.cmd 'AiderAddCurrentFile'
-    return
-  end
-
-  local channel = vim.g.aider_channel_id
-  -- The check for `channel` and `channel ~= 0` is now part of the main `if` condition above.
-
-  -- Aider is open, and we have its terminal buffer and channel.
-  -- Send Ctrl+U to clear the current line in the terminal.
-  vim.api.nvim_chan_send(channel, vim.api.nvim_replace_termcodes('<C-u>', true, false, true))
-
-  local command_to_send = '/add ' .. filepath .. '\r'
-  vim.api.nvim_chan_send(channel, command_to_send)
-end
-
 -- Global shortcut to toggle Aider window, works in normal, insert, and terminal modes
 vim.keymap.set({ 'n', 'i', 't' }, '<F7>', function()
   _G.ToggleAiderWindow()
@@ -1473,7 +1435,7 @@ require('lazy').setup({
       })
       -- https://github.com/nekowasabi/aider.vim
       vim.api.nvim_set_keymap('n', '<leader>at', ':AiderRun<CR>', { noremap = true, silent = true })
-      vim.keymap.set('n', '<leader>aa', _G.CustomAiderAddCurrentFile, { noremap = true, silent = true, desc = 'Aider: Add current file (clear input)' })
+      vim.keymap.set('n', '<leader>aa', ':AiderAddCurrentFile<CR>', { noremap = true, silent = true, desc = 'Aider: Add current file (clear input)' })
       vim.api.nvim_set_keymap('n', '<leader>ar', ':AiderAddCurrentFileReadOnly<CR>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>ax', ':AiderExit<CR>', { noremap = true, silent = true })
       vim.api.nvim_set_keymap('n', '<leader>ai', ':AiderAddIgnoreCurrentFile<CR>', { noremap = true, silent = true })
