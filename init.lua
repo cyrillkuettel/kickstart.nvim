@@ -651,6 +651,12 @@ require('lazy').setup({
               ['<C-x>'] = require('telescope.actions').select_horizontal,
               ['<C-t>'] = require('telescope.actions').select_tab,
               ['<c-d>'] = require('telescope.actions').delete_buffer,
+              ['p'] = function(prompt_bufnr)
+                local clipboard = vim.fn.getreg '+' -- or use '"' for unnamed
+                local picker = action_state.get_current_picker(prompt_bufnr)
+                local current_line = picker:_get_prompt()
+                picker:set_prompt(current_line .. clipboard)
+              end,
             },
           },
         },
