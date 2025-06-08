@@ -8,6 +8,7 @@ return {
   opts = {
     suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
     use_git_branch = true,
+    git_auto_restore_on_branch_change = true,
     -- log_level = 'debug',
   },
 }
