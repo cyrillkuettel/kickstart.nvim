@@ -1437,7 +1437,7 @@ require('lazy').setup({
     dependencies = 'vim-denops/denops.vim',
     config = function()
       vim.g.aider_command =
-        [[bash -c 'set -a; if [ -f "$HOME/.bash_profile" ]; then . "$HOME/.bash_profile"; fi; set +a; exec /home/cyrill/.local/bin/aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25']]
+        [[bash -lc 'exec /home/cyrill/.local/bin/aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25']]
       vim.g.aider_buffer_open_type = 'floating'
       vim.g.aider_floatwin_width = 100
       vim.g.aider_floatwin_height = 20
