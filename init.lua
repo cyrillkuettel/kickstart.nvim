@@ -280,6 +280,20 @@ vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+-- Function to toggle Aider window
+_G.ToggleAiderWindow = function()
+  if vim.g.aider_floatwin_id and vim.api.nvim_win_is_valid(vim.g.aider_floatwin_id) then
+    vim.cmd 'AiderHide'
+  else
+    vim.cmd 'AiderRun'
+  end
+end
+
+-- Global shortcut to toggle Aider window, works in normal, insert, and terminal modes
+vim.keymap.set({ 'n', 'i', 't' }, '<F7>', function()
+  _G.ToggleAiderWindow()
+end, { noremap = true, silent = true, desc = 'Toggle Aider Window' })
+
 -- colorscheme switching shortcut [cyrill]
 vim.api.nvim_create_user_command('ColorSchemeSwitch', function()
   require('telescope.builtin').colorscheme()
@@ -1411,8 +1425,10 @@ require('lazy').setup({
       vim.api.nvim_create_autocmd('User', {
         pattern = 'AiderOpen',
         callback = function(args)
-          vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { buffer = args.buf })
-          vim.keymap.set('n', '<Esc>', '<cmd>AiderHide<CR>', { buffer = args.buf })
+          vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Exit terminal mode' })
+          vim.keymap.set('n', '<Esc>', '<cmd>AiderHide<CR>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Hide window (Normal mode)' })
+          -- Ensure F7 hides the Aider window when pressed from within Aider's terminal/normal/insert mode
+          vim.keymap.set({'t', 'n', 'i'}, '<F7>', '<cmd>AiderHide<CR>', { buffer = args.buf, noremap = true, silent = true, desc = 'Aider: Hide window' })
         end,
       })
       -- https://github.com/nekowasabi/aider.vim
