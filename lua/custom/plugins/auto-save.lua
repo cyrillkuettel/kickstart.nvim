@@ -32,7 +32,7 @@ return {
       if filetype == 'lua' then
         return 3000 -- 3 seconds for Lua files
       else
-        return 5000 -- Default for other files (milliseconds)
+        return 1000 -- Default for other files (milliseconds)
       end
     end, -- saves the file at most every `debounce_delay` milliseconds
     callbacks = { -- functions to be executed at different intervals
