@@ -619,7 +619,8 @@ require('lazy').setup({
       -- This opens a window that shows you all of the keymaps for the current
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
-
+      local actions = require 'telescope.actions'
+      local action_state = require 'telescope.actions.state'
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
@@ -636,21 +637,21 @@ require('lazy').setup({
             i = {
               -- Bind Tab in insert mode
               ['<Tab>'] = focus_preview,
-              ['<c-d>'] = require('telescope.actions').delete_buffer,
+              ['<c-d>'] = actions.delete_buffer,
 
-              ['<C-v>'] = require('telescope.actions').select_vertical,
-              ['<C-x>'] = require('telescope.actions').select_horizontal,
-              ['<C-t>'] = require('telescope.actions').select_tab,
+              ['<C-v>'] = actions.select_vertical,
+              ['<C-x>'] = actions.select_horizontal,
+              ['<C-t>'] = actions.select_tab,
             },
             n = {
               -- Bind Tab in normal mode
               ['<Tab>'] = focus_preview,
 
               -- for opening in splits from normal mode
-              ['<C-v>'] = require('telescope.actions').select_vertical,
-              ['<C-x>'] = require('telescope.actions').select_horizontal,
-              ['<C-t>'] = require('telescope.actions').select_tab,
-              ['<c-d>'] = require('telescope.actions').delete_buffer,
+              ['<C-v>'] = actions.select_vertical,
+              ['<C-x>'] = actions.select_horizontal,
+              ['<C-t>'] = actions.select_tab,
+              ['<c-d>'] = actions.delete_buffer,
               ['p'] = function(prompt_bufnr)
                 local clipboard = vim.fn.getreg '+' -- or use '"' for unnamed
                 local picker = action_state.get_current_picker(prompt_bufnr)
