@@ -20,7 +20,7 @@ function M.add_files_to_aider(selected_entries)
       local target_file_path_escaped = vim.fn.fnameescape(vim.fn.expand(file_path))
       -- Make the file current buffer by opening it in the current window
       vim.cmd('edit ' .. target_file_path_escaped)
-      vim.cmd('AiderAddCurrentFile') -- This command should add the now-current file
+      vim.cmd 'AiderAddCurrentFile' -- This command should add the now-current file
       table.insert(files_added, vim.fn.fnamemodify(file_path, ':t'))
     else
       table.insert(files_failed, vim.fn.fnamemodify(tostring(file_path), ':t'))
@@ -33,7 +33,7 @@ function M.add_files_to_aider(selected_entries)
     if vim.fn.bufexists(original_bufnr) == 1 then
       vim.api.nvim_set_current_buf(original_bufnr)
     else
-      vim.cmd('enew') -- Fallback to a new empty buffer
+      vim.cmd 'enew' -- Fallback to a new empty buffer
       vim.notify('Original buffer (' .. original_bufnr .. ') no longer exists. Opened a new buffer.', vim.log.levels.WARN)
     end
   else
@@ -42,7 +42,7 @@ function M.add_files_to_aider(selected_entries)
     if vim.fn.bufexists(original_bufnr) == 1 then
       vim.api.nvim_set_current_buf(original_bufnr)
     else
-      vim.cmd('enew')
+      vim.cmd 'enew'
     end
     vim.notify('Original window (' .. original_win_id .. ') no longer exists. Restored buffer in current window.', vim.log.levels.WARN)
   end
@@ -62,17 +62,23 @@ M.aider_attach_mappings = function(prompt_bufnr, map)
   actions.select_default:replace(function()
     local entry = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
-    if entry then M.add_files_to_aider { entry } end
+    if entry then
+      M.add_files_to_aider { entry }
+    end
   end)
 
   map('i', '<C-a>', function()
     local current_picker_selected_entries = action_state.get_selected_entries(prompt_bufnr)
     if #current_picker_selected_entries == 0 then
       local current_entry = action_state.get_current_entry()
-      if current_entry then current_picker_selected_entries = { current_entry } end
+      if current_entry then
+        current_picker_selected_entries = { current_entry }
+      end
     end
     actions.close(prompt_bufnr)
-    if #current_picker_selected_entries > 0 then M.add_files_to_aider(current_picker_selected_entries) end
+    if #current_picker_selected_entries > 0 then
+      M.add_files_to_aider(current_picker_selected_entries)
+    end
   end)
   return true
 end
