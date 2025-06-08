@@ -1394,8 +1394,17 @@ require('lazy').setup({
     'nekowasabi/aider.vim',
     dependencies = 'vim-denops/denops.vim',
     config = function()
-      vim.g.aider_command =
-        [[bash -c 'source "$HOME/.bash_profile" >/dev/null 2>&1; exec env VERTEXAI_PROJECT="${VERTEXAI_PROJECT:-}" VERTEXAI_LOCATION="${VERTEXAI_LOCATION:-}" /home/cyrill/.local/bin/aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25']]
+      local cmd_file = vim.fn.expand '~/.local/bin/custom/aider_command'
+      -- Somehow env vars in .bash_profile are not recognized if we run this we have to provide api keys through the cli
+      -- This however necessitates putting the command in a external file
+      local default_cmd = 'aider --vim --edit-format udiff-simple --no-attribute-author --no-attribute-committer --model gemini-2.5-pro-preview-03-25'
+      if vim.fn.filereadable(cmd_file) == 1 then
+        local cmd_content = vim.fn.readfile(cmd_file)
+        vim.g.aider_command = table.concat(cmd_content, ' ')
+      else
+        vim.g.aider_command = default_cmd
+      end
+
       vim.g.aider_buffer_open_type = 'floating'
       vim.g.aider_floatwin_width = 100
       vim.g.aider_floatwin_height = 20
