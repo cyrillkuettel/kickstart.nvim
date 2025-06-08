@@ -602,7 +602,8 @@ require('lazy').setup({
           mappings = {
             i = {
               -- Bind Tab in insert mode
-              ['<Tab>'] = focus_preview,
+              -- disable because I suspect it might cause wird behavior if editign text in normal mode in telescope search
+              -- ['<Tab>'] = focus_preview,
               ['<c-d>'] = actions.delete_buffer,
 
               ['<C-v>'] = actions.select_vertical,
@@ -611,7 +612,7 @@ require('lazy').setup({
             },
             n = {
               -- Bind Tab in normal mode
-              ['<Tab>'] = focus_preview,
+              -- ['<Tab>'] = focus_preview,
 
               -- for opening in splits from normal mode
               ['<C-v>'] = actions.select_vertical,
@@ -661,7 +662,9 @@ require('lazy').setup({
       vim.keymap.set('n', 'fyf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', ',ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', ',sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+
+      -- Most used command by far
+      vim.keymap.set('n', ',,', builtin.live_grep, { desc = '[S]earch by [G]rep' })
 
       local delta_commits = previewers.new_termopen_previewer {
         get_command = function(entry)
@@ -730,7 +733,7 @@ require('lazy').setup({
       vim.keymap.set('n', ',sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', ',rs', builtin.resume, { desc = '[S]earch [R]esume' })
 
-      vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+      -- vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
       -- Using these two mainly for navigation
       vim.keymap.set('n', '..', builtin.buffers, { desc = '[ ] Find existing buffers' })
       --
