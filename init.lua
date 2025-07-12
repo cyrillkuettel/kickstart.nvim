@@ -1000,10 +1000,36 @@ require('lazy').setup({
         -- auto resolving imports, go to definition and the like.
         -- This will overwrite the project specific settings
         basedpyright = {
+          root_dir = function(fname)
+            local util = require 'lspconfig.util'
+            local home = os.getenv 'HOME'
+
+            -- 1. First, try to find a real project root marker (.git, pyproject.toml, etc.)
+            --    This is the ideal scenario.
+            local project_root = util.root_pattern('pyrightconfig.json', 'pyproject.toml', 'setup.py', '.git')(fname)
+
+            if project_root then
+              return project_root
+            end
+
+            -- 2. If no project marker is found, we create a fallback.
+            --    We'll use the directory of the file being edited as the root.
+            local file_dir = vim.fs.dirname(fname)
+
+            -- 3. THE CRITICAL CHECK: Only use this fallback if the directory
+            --    is NOT your home directory. This prevents scanning all of ~.
+            if file_dir ~= home then
+              return file_dir
+            end
+
+            -- 4. If we're in the home directory and no project marker was found,
+            --    return nil to prevent the LSP from starting.
+            return nil
+          end,
           enabled = true,
           settings = {
             basedpyright = {
-              exclude = { os.getenv 'HOME' }, -- to prevent lag, do not enable if file opened in home dir
+              exclude = { os.getenv 'HOME' .. '/**' }, -- to prevent lag, do not enable if file opened in home dir
               analysis = {
                 -- typeshedPaths = { '/home/cyrill/onegov-cloud/stubs' },
 
