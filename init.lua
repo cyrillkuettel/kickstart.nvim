@@ -313,6 +313,32 @@ end, { desc = 'Yank absolute path of current buffer to clipboard' })
 -- Keymap for YankAbsolutePath
 vim.keymap.set('n', '<leader>yp', '<cmd>YankAbsolutePath<CR>', { desc = '[Y]ank current buffer [P]ath' })
 
+-- Command to yank relative path of current buffer to clipboard
+vim.api.nvim_create_user_command('YankRelativePath', function()
+  local file_path = vim.fn.expand '%:p'
+  if file_path == '' then
+    vim.notify('No file name to copy.', vim.log.levels.WARN)
+    return
+  end
+
+  local file_dir = vim.fn.expand '%:p:h'
+  -- Use shellescape to handle paths with spaces
+  local git_root_cmd = 'git -C ' .. vim.fn.shellescape(file_dir) .. ' rev-parse --show-toplevel'
+  -- Redirect stderr to null to avoid error messages
+  local git_root = vim.fn.trim(vim.fn.system(git_root_cmd .. ' 2>/dev/null'))
+
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Not a git repository.', vim.log.levels.WARN)
+    return
+  end
+
+  local relative_path = file_path:sub(#git_root + 2)
+  vim.fn.setreg('+', relative_path)
+  vim.notify('Copied to clipboard: ' .. relative_path)
+end, { desc = 'Yank relative path of current buffer to clipboard' })
+-- Keymap for YankRelativePath
+vim.keymap.set('n', '<leader>yrp', '<cmd>YankRelativePath<CR>', { desc = '[Y]ank current buffer [R]elative path' })
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
@@ -734,7 +760,7 @@ require('lazy').setup({
       vim.keymap.set('n', ',sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', ',rs', builtin.resume, { desc = '[S]earch [R]esume' })
 
-      -- vim.keymap.set({ 'n', 'i' }, ',,', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
+      vim.keymap.set({ 'n', 'i' }, ',of', '<cmd>Telescope oldfiles<CR>', { noremap = true, silent = true, desc = 'Recent files' })
       -- Using these two mainly for navigation
       vim.keymap.set('n', '..', builtin.buffers, { desc = '[ ] Find existing buffers' })
       --
@@ -983,7 +1009,7 @@ require('lazy').setup({
 
                 -- Enable a basic level of checking, else auto import won't work.
                 -- basedpyright very intrusive with errors, this calms it down
-                typeCheckingMode = 'standard',
+                typeCheckingMode = 'off',
 
                 reportMissingSuperCall = 'none',
 
@@ -1368,7 +1394,7 @@ require('lazy').setup({
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       require('treesitter-context').setup {
-        enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+        enable = false, -- Enable this plugin (Can be enabled/disabled later via commands)
         multiwindow = false, -- Enable multiwindow support.
         max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
         min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
@@ -1422,8 +1448,8 @@ require('lazy').setup({
       end
 
       vim.g.aider_buffer_open_type = 'floating'
-      vim.g.aider_floatwin_width = 100
-      vim.g.aider_floatwin_height = 20
+      vim.g.aider_floatwin_width = 200
+      vim.g.aider_floatwin_height = 40
 
       vim.api.nvim_create_autocmd('User', {
         pattern = 'AiderOpen',
