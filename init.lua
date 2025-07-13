@@ -1457,7 +1457,14 @@ require('lazy').setup({
   --
   -- My custom plugins
   { import = 'custom.plugins' },
-
+  {
+    'shortcuts/no-neck-pain.nvim',
+    opts = {
+      autocmds = {
+        enableOnVimEnter = true,
+      },
+    },
+  },
   {
     'nekowasabi/aider.vim',
     dependencies = 'vim-denops/denops.vim',
