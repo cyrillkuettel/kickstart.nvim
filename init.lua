@@ -113,14 +113,30 @@ vim.opt.showmode = false
 -- for https://github.com/rmagatti/auto-session
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
--- Sync clipboard between OS and Neovim.
---  Schedule the setting after `UiEnter` because it can increase startup-time.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+local is_graphical = vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY
 
+if is_graphical then
+  -- Sync clipboard between OS and Neovim.
+  --  Schedule the setting after `UiEnter` because it can increase startup-time.
+  --  Remove this option if you want your OS clipboard to remain independent.
+  --  See `:help 'clipboard'`
+  vim.schedule(function()
+    vim.opt.clipboard = 'unnamedplus'
+  end)
+else
+  -- If on a server, allow yanking text to clipboard that is locally present
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = {
+      ['+'] = require('vim.ui.clipboard.osc52').copy '+',
+      ['*'] = require('vim.ui.clipboard.osc52').copy '*',
+    },
+    paste = {
+      ['+'] = require('vim.ui.clipboard.osc52').paste '+',
+      ['*'] = require('vim.ui.clipboard.osc52').paste '*',
+    },
+  }
+end
 -- Enable break indent
 vim.opt.breakindent = true
 
