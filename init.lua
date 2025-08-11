@@ -255,6 +255,14 @@ vim.keymap.set('n', '<S-Tab>', ':Neotree toggle reveal<CR>', { noremap = true, s
 -- Another escape key
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode with jk' })
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and stay in visual mode' })
+vim.keymap.set('n', '<A-S-2>', function()
+  -- Check if Neotree is already open
+  local neotree_open = false
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(win), 'filetype') == 'neo-tree' then neotree_open = true end
+  end
+  vim.cmd('Neotree toggle reveal')
+end, { noremap = true, silent = true, desc = 'Toggle NeoTree and reveal current file' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
 
 --  Alt + Shift + I  for my favorite navigation.
