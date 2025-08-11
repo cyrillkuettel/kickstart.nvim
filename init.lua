@@ -675,7 +675,7 @@ require('lazy').setup({
           live_grep = {
             additional_args = function()
               -- I rarely use regex, I prefer literal match
-              return { '--fixed-strings' }
+              return { '--fixed-strings', '--glob', '!stubs/' }
             end,
           },
           oldfiles = {
@@ -1558,3 +1558,4 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+          file_ignore_patterns = { 'node_modules', 'stubs/' },
