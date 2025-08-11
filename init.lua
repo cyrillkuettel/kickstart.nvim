@@ -418,6 +418,25 @@ vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP: Disable hover capability from Ruff',
 })
 
+-- This is a battle-tested solution to the auto-session vs. no-neck-pain conundrum.
+-- The approach is to fully decouple the plugins and use Neovim's User events
+-- to orchestrate them. `pcall` is used to prevent any errors from crashing startup.
+--
+-- 1. On session save, we disable no-neck-pain to ensure auto-session saves a clean layout.
+-- 2. On session restore, we re-enable no-neck-pain.
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'SessionSavePre',
+  callback = function()
+    pcall(vim.cmd, 'NoNeckPainDisable')
+  end,
+})
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'SessionLoadPost',
+  callback = function()
+    pcall(vim.cmd, 'NoNeckPain')
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
