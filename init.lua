@@ -111,7 +111,7 @@ vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
 -- for https://github.com/rmagatti/auto-session
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,terminal,localoptions'
 
 local is_graphical = vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY
 
@@ -416,6 +416,19 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
   end,
   desc = 'LSP: Disable hover capability from Ruff',
+})
+
+-- Prevent auto-session not working in combination with no-neck-pain
+vim.api.nvim_create_autocmd({ 'User' }, {
+  pattern = 'SessionLoadPost',
+  callback = function()
+    -- Check if there's a valid window to center before running the command
+    if #vim.api.nvim_list_wins() > 0 then
+      -- pcall is a "protected call" so it won't crash if something is weird
+      pcall(vim.cmd, 'NoNeckPain')
+    end
+  end,
+  desc = 'Auto-center buffer after session restore',
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -1521,7 +1534,7 @@ require('lazy').setup({
     'shortcuts/no-neck-pain.nvim',
     opts = {
       autocmds = {
-        enableOnVimEnter = false,
+        enableOnVimEnter = false, -- Trigger it manually. Issues with auto-session.
       },
     },
   },
