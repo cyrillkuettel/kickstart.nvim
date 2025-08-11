@@ -11,7 +11,8 @@ return {
     suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
     use_git_branch = true,
     git_auto_restore_on_branch_change = true,
-    post_restore_cmds = { 'NoNeckPain' },
+    post_restore_cmds = { 'silent! NoNeckPain' },
+    pre_save_cmds = { 'silent! NoNeckPainDisable' },
     -- log_level = 'debug',
   },
 }
