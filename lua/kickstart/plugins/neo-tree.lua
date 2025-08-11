@@ -18,8 +18,8 @@ return {
   },
   opts = {
     close_if_last_window = true, -- Close Neo-tree if it's the last window
-    auto_clean_after_session_restore = true,
-    auto_restore_session_experimental = true, -- https://github.com/nvim-neo-tree/neo-tree.nvim/pull/1366/files
+    auto_clean_after_session_restore = false,
+    auto_restore_session_experimental = false, -- https://github.com/nvim-neo-tree/neo-tree.nvim/pull/1366/files
     filesystem = {
       window = {
         -- Keep the default mapping to close with \

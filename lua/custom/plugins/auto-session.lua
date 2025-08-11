@@ -1,15 +1,18 @@
 return {
   'rmagatti/auto-session',
   lazy = false,
-  priority = 9999, -- <-- FIX: Load it before almost everything else
 
   ---enables autocomplete for opts
   ---@module "auto-session"
   ---@type AutoSession.Config
   opts = {
     suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
+
+    cwd_change_handling = true,
+    pre_cwd_changed_cmds = {
+      'Neotree close',
+    },
     use_git_branch = true,
-    git_auto_restore_on_branch_change = true,
     -- log_level = 'debug',
   },
 }

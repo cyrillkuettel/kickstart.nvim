@@ -238,6 +238,9 @@ vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
 -- Open lsp log path for debugging
 vim.keymap.set('n', '<leader>oll', ':e `=v:lua.vim.lsp.get_log_path()`<CR>')
 
+-- Map YY to ZZ for QWERTZ keyboard (As it was originally meant to be)
+vim.keymap.set('n', 'YY', 'ZZ', { noremap = true, silent = true })
+
 -- Set the keymap in visual mode
 vim.keymap.set('v', '<leader>b', format_visual_black, {
   noremap = true,
@@ -299,6 +302,8 @@ vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+vim.keymap.set('n', 'nn', '<cmd>NoNeckPain<cr>', { desc = 'Center buffer' })
 
 -- Function to toggle Aider window
 _G.ToggleAiderWindow = function()
@@ -706,13 +711,24 @@ require('lazy').setup({
       vim.keymap.set('n', ',sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', ',sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
-      -- I really like fyf to search and go to files.
-      vim.keymap.set('n', 'fyf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', ',ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      -- I need to use this one more
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
+      vim.keymap.set('n', '<leader>gp', function()
+        builtin.find_files { find_command = { 'rg', '--files', '--glob', '*.py' } }
+      end, { desc = 'Grep Python files' })
+
+      vim.keymap.set('n', '<leader>gch', function()
+        builtin.find_files { find_command = { 'rg', '--files', '--glob', '*.pt' } }
+      end, { desc = '[G]rep [c][h]ameleon templates' })
+
+      -- Second most used command
+      vim.keymap.set('n', '<leader>fq', builtin.find_files, { desc = 'Find files' })
+
       -- Most used command by far
-      vim.keymap.set('n', ',,', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      -- K - looks up word under cursor in man pages (rarely useful so we're overriding here)
+      vim.keymap.set('n', 'K', builtin.live_grep, { desc = '' })
 
       local delta_commits = previewers.new_termopen_previewer {
         get_command = function(entry)
@@ -919,6 +935,8 @@ require('lazy').setup({
           -- Find references for the word under your cursor.
           map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
+          map('gci', require('telescope.builtin').lsp_incoming_calls, '[G]oto [C]alls [I]ncoming')
+          map('gco', require('telescope.builtin').lsp_outgoing_calls, '[G]oto [C]alls [O]utgoing')
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
           map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
@@ -1371,7 +1389,8 @@ require('lazy').setup({
       vim.cmd.colorscheme 'monokai'
 
       -- Overwrite background color to be darker
-      vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
+      -- cyrill
+      -- vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
 
       -- Set the color for plain text
       -- vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
