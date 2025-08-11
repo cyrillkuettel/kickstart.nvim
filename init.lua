@@ -366,7 +366,7 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 -- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 vim.keymap.set('n', 'Q', '<nop>')
-vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
+-- vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
 -- Use vertical split for vim help
@@ -702,7 +702,7 @@ require('lazy').setup({
       vim.keymap.set('n', ',sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
       -- I really like fyf to search and go to files.
-      vim.keymap.set('n', 'fyf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', ',f', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', ',ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
