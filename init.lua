@@ -385,6 +385,10 @@ vim.keymap.set('n', 'Q', '<nop>')
 vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
+vim.keymap.set('n', 'ff', function()
+  require('fff').find_files()
+end, { desc = 'Open file picker' })
+
 -- Use vertical split for vim help
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '*.txt',
@@ -729,6 +733,8 @@ require('lazy').setup({
 
       -- Most used command by far
       -- K - looks up word under cursor in man pages (rarely useful so we're overriding here)
+      -- K to full text search
+      -- default K - looks up word under cursor in man pages (rarely useful so we're overriding here)
       vim.keymap.set('n', 'K', builtin.live_grep, { desc = '' })
 
       local delta_commits = previewers.new_termopen_previewer {
