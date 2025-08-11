@@ -812,8 +812,7 @@ require('lazy').setup({
         }
       end, { desc = 'Grep in Neovim config files' })
 
-      -- onegov specific keymapings for search
-      vim.keymap.set('n', ',sov', function()
+      vim.keymap.set('n', '<leader>sov', function()
         local args
         local config = require('telescope.config').values
         if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
@@ -826,9 +825,32 @@ require('lazy').setup({
         table.insert(args, '**/views/**')
         builtin.live_grep {
           additional_args = args,
+          default_text = 'def ',
+          prompt_title = 'Onegov views',
         }
       end, { desc = '[S]earch [O]negov [V]iews' })
+      vim.keymap.set('n', '<leader>sot', function()
+        builtin.find_files {
+          prompt_title = 'PT Templates',
+          default_text = '.pt',
+        }
+      end, { desc = '[S]earch [onegov] [T]emplates' })
     end,
+    vim.keymap.set('n', '<leader>sot', function()
+      local args
+      local config = require('telescope.config').values
+      if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
+        args = config.pickers.live_grep.additional_args()
+      else
+        args = {}
+      end
+      table.insert(args, '--glob')
+      table.insert(args, '*.pt')
+      builtin.live_grep {
+        additional_args = args,
+        prompt_title = 'PT Templates',
+      }
+    end, { desc = '[S]earch [onegov] [T]emplates' }),
   },
 
   -- LSP Plugins
