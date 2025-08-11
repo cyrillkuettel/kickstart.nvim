@@ -857,6 +857,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>gch', function()
         builtin.live_grep { glob_pattern = '*.pt' }
       end, { desc = 'Grep in chameleon templates' })
+
+      vim.keymap.set('n', '<leader>gpy', function()
+        builtin.live_grep { glob_pattern = '*.py' }
+      end, { desc = 'Grep in python files' })
     end,
   },
 
@@ -1395,14 +1399,14 @@ require('lazy').setup({
 
       -- Overwrite background color to be darker
       -- cyrill
-      -- vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
+      vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
 
       -- Set the color for plain text
-      -- vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
+      vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
 
       -- Try to override imports
-      --vim.cmd.hi 'Include guifg=#FFFFFF ctermfg=15'
-      --vim.cmd.hi 'PreProc guifg=#FFFFFF ctermfg=15' -- This often controls import styling
+      vim.cmd.hi 'Include guifg=#FFFFFF ctermfg=15'
+      vim.cmd.hi 'PreProc guifg=#FFFFFF ctermfg=15' -- This often controls import styling
 
       -- You can configure highlights by doing something like:
       -- vim.cmd.hi 'Comment gui=none'
@@ -1521,7 +1525,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   --
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   --
