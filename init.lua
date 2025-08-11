@@ -811,11 +811,16 @@ require('lazy').setup({
 
       -- onegov specific keymapings for search
       vim.keymap.set('n', ',sov', function()
-        builtin.lsp_dynamic_workspace_symbols {
-          entry_filter = function(entry)
-            -- only show symbols in files that are in a 'views' directory
-            return entry.filename and string.find(entry.filename, '/views/')
-          end,
+        local args = {}
+        local default_args_fn = require('telescope.config').values.pickers.live_grep.additional_args
+        if default_args_fn then
+          args = default_args_fn()
+        end
+
+        table.insert(args, '--glob')
+        table.insert(args, '**/views/**')
+        builtin.live_grep {
+          additional_args = args,
         }
       end, { desc = '[S]earch [O]negov [V]iews' })
     end,
