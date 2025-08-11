@@ -422,11 +422,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.api.nvim_create_autocmd({ 'User' }, {
   pattern = 'SessionLoadPost',
   callback = function()
-    -- Check if there's a valid window to center before running the command
-    if #vim.api.nvim_list_wins() > 0 then
-      -- pcall is a "protected call" so it won't crash if something is weird
-      pcall(vim.cmd, 'NoNeckPain')
-    end
+    vim.schedule(function()
+      -- Check if there's a valid window to center before running the command
+      if #vim.api.nvim_list_wins() > 0 then
+        -- pcall is a "protected call" so it won't crash if something is weird
+        pcall(vim.cmd, 'NoNeckPain')
+      end
+    end)
   end,
   desc = 'Auto-center buffer after session restore',
 })

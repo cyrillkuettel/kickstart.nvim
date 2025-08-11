@@ -1,6 +1,7 @@
 return {
   'rmagatti/auto-session',
   lazy = false,
+  priority = 9999, -- <-- FIX: Load it before almost everything else
 
   ---enables autocomplete for opts
   ---@module "auto-session"
