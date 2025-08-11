@@ -1539,7 +1539,6 @@ require('lazy').setup({
   {
     'shortcuts/no-neck-pain.nvim',
     opts = {
-      killAllBuffersOnDisable = false,
       autocmds = {
         enableOnVimEnter = false, -- Trigger it manually. Issues with auto-session.
       },
