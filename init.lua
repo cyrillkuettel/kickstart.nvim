@@ -1519,7 +1519,6 @@ require('lazy').setup({
   { import = 'custom.plugins' },
   {
     'shortcuts/no-neck-pain.nvim',
-    event = 'User SessionLoadPost',
     opts = {
       autocmds = {
         enableOnVimEnter = false, -- Trigger it manually. Issues with auto-session.
@@ -1527,9 +1526,6 @@ require('lazy').setup({
     },
     config = function(_, opts)
       require('no-neck-pain').setup(opts)
-      if #vim.api.nvim_list_wins() > 0 then
-        pcall(vim.cmd, 'NoNeckPain')
-      end
     end,
   },
   {
