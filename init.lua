@@ -259,9 +259,11 @@ vim.keymap.set('n', '<A-S-2>', function()
   -- Check if Neotree is already open
   local neotree_open = false
   for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(win), 'filetype') == 'neo-tree' then neotree_open = true end
+    if vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(win), 'filetype') == 'neo-tree' then
+      neotree_open = true
+    end
   end
-  vim.cmd('Neotree toggle reveal')
+  vim.cmd 'Neotree toggle reveal'
 end, { noremap = true, silent = true, desc = 'Toggle NeoTree and reveal current file' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
 
@@ -287,7 +289,8 @@ vim.api.nvim_create_user_command('MakeLint', function()
   -- Run linting and put things int quicklist
   -- Requires you to have a makefile with 'make lint'
   local old_makeprg = vim.o.makeprg
-  vim.o.makeprg = 'make lint'
+  -- vim.o.makeprg = 'make lint'
+  vim.o.makeprg = 'bash ./mypy.sh'
   local old_errorformat = vim.o.errorformat
   vim.o.errorformat = '%f:%l:%c:%m,%f:%l:%m'
 
@@ -664,7 +667,7 @@ require('lazy').setup({
             i = {
               -- Bind Tab in insert mode
               -- disable because I suspect it might cause wird behavior if editign text in normal mode in telescope search
-              -- ['<Tab>'] = focus_preview,
+              ['<Tab>'] = focus_preview,
               ['<c-d>'] = actions.delete_buffer,
 
               ['<C-v>'] = actions.select_vertical,
@@ -673,7 +676,7 @@ require('lazy').setup({
             },
             n = {
               -- Bind Tab in normal mode
-              -- ['<Tab>'] = focus_preview,
+              ['<Tab>'] = focus_preview,
 
               -- for opening in splits from normal mode
               ['<C-v>'] = actions.select_vertical,
