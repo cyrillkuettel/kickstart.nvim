@@ -235,6 +235,9 @@ vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
 vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
 vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
 
+-- Open lsp log path for debugging
+vim.keymap.set('n', '<leader>oll', ':e `=v:lua.vim.lsp.get_log_path()`<CR>')
+
 -- Set the keymap in visual mode
 vim.keymap.set('v', '<leader>b', format_visual_black, {
   noremap = true,
