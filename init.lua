@@ -715,16 +715,10 @@ require('lazy').setup({
       -- I need to use this one more
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
-      vim.keymap.set('n', '<leader>gp', function()
-        builtin.find_files { find_command = { 'rg', '--files', '--glob', '*.py' } }
-      end, { desc = 'Grep Python files' })
-
-      vim.keymap.set('n', '<leader>gch', function()
-        builtin.find_files { find_command = { 'rg', '--files', '--glob', '*.pt' } }
-      end, { desc = '[G]rep [c][h]ameleon templates' })
-
       -- Second most used command
-      vim.keymap.set('n', '<leader>fq', builtin.find_files, { desc = 'Find files' })
+      vim.keymap.set('n', '<leader>fq', function()
+        require('telescope.builtin').find_files()
+      end, { desc = 'Find files' })
 
       -- Most used command by far
       -- K - looks up word under cursor in man pages (rarely useful so we're overriding here)
@@ -842,16 +836,27 @@ require('lazy').setup({
         builtin.live_grep {
           additional_args = args,
           default_text = 'def ',
-          prompt_title = 'Onegov views',
+          prompt_title = 'pyramid views',
         }
       end, { desc = '[S]earch [O]negov [V]iews' })
 
-      vim.keymap.set('n', '<leader>sot', function()
+      vim.keymap.set('n', '<leader>sch', function()
         builtin.find_files {
           prompt_title = 'PT Templates',
           find_command = { 'fd', '--type', 'f', '--extension', 'pt' },
         }
-      end, { desc = '[S]earch [onegov] [T]emplates' })
+      end, { desc = '[S]earch [chameleon] [T]emplates' })
+
+      vim.keymap.set('n', '<leader>spy', function()
+        builtin.find_files {
+          prompt_title = 'python files',
+          find_command = { 'fd', '--type', 'f', '--extension', 'py' },
+        }
+      end, { desc = 'search python files only' })
+
+      vim.keymap.set('n', '<leader>gch', function()
+        builtin.live_grep { glob_pattern = '*.pt' }
+      end, { desc = 'Grep in chameleon templates' })
     end,
   },
 
@@ -1516,7 +1521,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   --
-  require 'kickstart.plugins.neo-tree',
+  -- require 'kickstart.plugins.neo-tree',
 
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   --
