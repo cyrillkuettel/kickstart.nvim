@@ -422,13 +422,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.api.nvim_create_autocmd({ 'User' }, {
   pattern = 'SessionLoadPost',
   callback = function()
-    vim.schedule(function()
-      -- Check if there's a valid window to center before running the command
-      if #vim.api.nvim_list_wins() > 0 then
-        -- pcall is a "protected call" so it won't crash if something is weird
-        pcall(vim.cmd, 'NoNeckPain')
-      end
-    end)
+    -- Check if there's a valid window to center before running the command
+    if #vim.api.nvim_list_wins() > 0 then
+      -- pcall is a "protected call" so it won't crash if something is weird
+      pcall(vim.cmd, 'NoNeckPain')
+    end
   end,
   desc = 'Auto-center buffer after session restore',
 })
@@ -1534,6 +1532,8 @@ require('lazy').setup({
   { import = 'custom.plugins' },
   {
     'shortcuts/no-neck-pain.nvim',
+    lazy = false,
+    priority = 10000,
     opts = {
       autocmds = {
         enableOnVimEnter = false, -- Trigger it manually. Issues with auto-session.
