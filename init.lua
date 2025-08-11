@@ -851,25 +851,12 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sot', function()
         builtin.find_files {
           prompt_title = 'PT Templates',
-          default_text = '.pt',
+          entry_filter = function(entry)
+            return entry.value and entry.value:match('%.pt$')
+          end,
         }
       end, { desc = '[S]earch [onegov] [T]emplates' })
     end,
-    vim.keymap.set('n', '<leader>sot', function()
-      local args
-      local config = require('telescope.config').values
-      if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
-        args = config.pickers.live_grep.additional_args()
-      else
-        args = {}
-      end
-      table.insert(args, '--glob')
-      table.insert(args, '*.pt')
-      builtin.live_grep {
-        additional_args = args,
-        prompt_title = 'PT Templates',
-      }
-    end, { desc = '[S]earch [onegov] [T]emplates' }),
   },
 
   -- LSP Plugins
