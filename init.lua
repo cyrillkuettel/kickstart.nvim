@@ -811,10 +811,12 @@ require('lazy').setup({
 
       -- onegov specific keymapings for search
       vim.keymap.set('n', ',sov', function()
-        local args = {}
-        local default_args_fn = require('telescope.config').values.pickers.live_grep.additional_args
-        if default_args_fn then
-          args = default_args_fn()
+        local args
+        local config = require('telescope.config').values
+        if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
+          args = config.pickers.live_grep.additional_args()
+        else
+          args = {}
         end
 
         table.insert(args, '--glob')
