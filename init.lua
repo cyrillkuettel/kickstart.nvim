@@ -1063,7 +1063,7 @@ require('lazy').setup({
 
                 -- Enable a basic level of checking, else auto import won't work.
                 -- basedpyright very intrusive with errors, this calms it down
-                typeCheckingMode = 'off',
+                typeCheckingMode = 'standard',
 
                 reportMissingSuperCall = 'none',
 
@@ -1489,7 +1489,7 @@ require('lazy').setup({
     'shortcuts/no-neck-pain.nvim',
     opts = {
       autocmds = {
-        enableOnVimEnter = true,
+        enableOnVimEnter = false,
       },
     },
   },
