@@ -226,7 +226,8 @@ end
 -- Deal with it 😎😎😎
 vim.keymap.set('n', '<space>', '"_ciw', { desc = 'Change inner word' })
 
-vim.keymap.set('n', '<leader>bt', ':BlameToggle Window<cr>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>bt', ':BlameToggle<cr>', { noremap = true, silent = true })
+
 vim.keymap.set('n', '<leader>gg', ':LazyGit<cr>', { noremap = true, silent = true })
 
 vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
