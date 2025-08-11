@@ -1,6 +1,6 @@
 return {
   'dmtrKovalenko/fff.nvim',
-  build = 'cargo +nightly build --release',
+  build = 'cargo build --release',
   opts = {
     -- Core settings
     base_path = vim.fn.getcwd(), -- Base directory for file indexing
@@ -103,7 +103,7 @@ return {
 
     -- Debug options
     debug = {
-      enabled = true, -- Enable debug mode
+      enabled = false, -- Enable debug mode
       show_scores = false, -- Show scoring information (toggle with F2)
     },
   },
