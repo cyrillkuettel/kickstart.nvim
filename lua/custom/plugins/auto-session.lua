@@ -6,13 +6,20 @@ return {
   ---@module "auto-session"
   ---@type AutoSession.Config
   opts = {
-    suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
+    log_level = 'error',
+    auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
 
-    cwd_change_handling = true,
+    auto_session_enable_last_session = false,
+
     pre_cwd_changed_cmds = {
       'Neotree close',
     },
+
+    pre_save_cmds = {
+      'Neotree close',
+    },
+
     use_git_branch = true,
-    -- log_level = 'debug',
+    auto_restore_enabled = true,
   },
 }
