@@ -113,8 +113,7 @@ vim.opt.showmode = false
 -- for https://github.com/rmagatti/auto-session
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,terminal,localoptions'
 
-local is_graphical = vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY
-
+local is_graphical = vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.fn.has 'mac' == 1
 if is_graphical then
   -- Sync clipboard between OS and Neovim.
   --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -125,6 +124,7 @@ if is_graphical then
   end)
 else
   -- If on a server, allow yanking text to clipboard that is locally present
+  -- This allows to yank text on server and have it locally, if you use this config on server.
   vim.g.clipboard = {
     name = 'OSC 52',
     copy = {
@@ -380,10 +380,11 @@ vim.keymap.set('n', 'Q', '<nop>')
 vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
-vim.keymap.set('n', 'ff', function()
-  require('fff').find_files()
-end, { desc = 'Open file picker' })
-
+if vim.fn.has 'mac' == 0 then
+  vim.keymap.set('n', 'ff', function()
+    require('fff').find_files()
+  end, { desc = 'Open file picker' })
+end
 -- Use vertical split for vim help
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '*.txt',
