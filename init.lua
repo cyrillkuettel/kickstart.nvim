@@ -196,8 +196,6 @@ local function format_visual_black()
     return
   end
 
-  -- Simplified command construction and execution
-  -- Note: vim.fn.shellescape is still crucial for filenames with spaces/symbols!
   local black_executable = vim.fn.executable 'black' == 1 and 'black' or 'python3.11 -m black'
   local cmd_parts = {
     black_executable,
@@ -208,7 +206,7 @@ local function format_visual_black()
     '--line-ranges',
     string.format('%d-%d', start_line, end_line),
     end_line,
-    file_path, -- vim.fn.system handles shell escaping for individual arguments
+    file_path,
   }
 
   -- Run the command and capture output
@@ -217,9 +215,6 @@ local function format_visual_black()
     vim.notify('Black formatting failed:\n' .. table.concat(output, '\n'), vim.log.levels.ERROR)
     return
   end
-
-  -- Check if file changed on disk and prompt to reload if it did.
-  -- If black failed, this will likely do nothing.
   vim.cmd 'checktime'
 end
 
@@ -727,12 +722,11 @@ require('lazy').setup({
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
       -- Second most used command
-      vim.keymap.set('n', '<leader>fq', function()
-        require('telescope.builtin').find_files()
-      end, { desc = 'Find files' })
+      -- vim.keymap.set('n', '<leader>fq', function()
+      -- require('telescope.builtin').find_files()
+      -- end, { desc = 'Find files' })
 
       -- Most used command by far
-      -- K - looks up word under cursor in man pages (rarely useful so we're overriding here)
       -- K to full text search
       -- default K - looks up word under cursor in man pages (rarely useful so we're overriding here)
       vim.keymap.set('n', 'K', builtin.live_grep, { desc = '' })
