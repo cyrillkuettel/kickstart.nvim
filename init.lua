@@ -1,4 +1,3 @@
---
 -- 1. really really need more options for full text search in telescope
 -- Neotree show current file if neotree shown
 -- switch ,, to alt + f4, reasonable to always use last files
@@ -136,6 +135,10 @@ else
       ['*'] = require('vim.ui.clipboard.osc52').paste '*',
     },
   }
+  -- Also sync clipboard on servers
+  vim.schedule(function()
+    vim.opt.clipboard = 'unnamedplus'
+  end)
 end
 -- Enable break indent
 vim.opt.breakindent = true
@@ -385,6 +388,7 @@ if vim.fn.has 'mac' == 0 then
     require('fff').find_files()
   end, { desc = 'Open file picker' })
 end
+
 -- Use vertical split for vim help
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '*.txt',
@@ -723,9 +727,9 @@ require('lazy').setup({
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
       -- Second most used command
-      -- vim.keymap.set('n', '<leader>fq', function()
-      -- require('telescope.builtin').find_files()
-      -- end, { desc = 'Find files' })
+      vim.keymap.set('n', 'ff', function()
+        require('telescope.builtin').find_files()
+      end, { desc = 'Find files' })
 
       -- Most used command by far
       -- K to full text search
