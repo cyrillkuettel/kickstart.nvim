@@ -1,3 +1,7 @@
+local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
+if is_server then
+  return {}
+end
 if vim.fn.has 'mac' == 1 then
   return {}
 end
