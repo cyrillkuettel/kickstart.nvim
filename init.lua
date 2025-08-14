@@ -264,11 +264,17 @@ vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' 
 --  Alt + Shift + I  for my favorite navigation.
 -- Remove all the Ctrl+I and Ctrl+O mappings first
 -- This makes Alt+Shift+O jump forward (opposite of normal Ctrl+O)
-vim.keymap.set('n', '<A-S-o>', function()
+-- We also make sure this works on Mac:
+local is_mac = vim.fn.has 'mac' == 1
+local mod = is_mac and 'D' or 'A' -- Same key that's "special" in Apple's alternate reality
+
+-- Jump forward (opposite of normal Ctrl+O, this is just how I like it)
+vim.keymap.set('n', '<' .. mod .. '-S-o>', function()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-i>', true, true, true), 'n', false)
 end, { noremap = true, silent = true, desc = 'Jump forward in jump list' })
--- This makes Alt+Shift+I jump backward (opposite of normal Ctrl+I)
-vim.keymap.set('n', '<A-S-i>', function()
+
+-- Jump backward (opposite of normal Ctrl+I)
+vim.keymap.set('n', '<' .. mod .. '-S-i>', function()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-o>', true, true, true), 'n', false)
 end, { noremap = true, silent = true, desc = 'Jump backward in jump list' })
 
