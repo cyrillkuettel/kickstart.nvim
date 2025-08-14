@@ -1438,6 +1438,8 @@ require('lazy').setup({
       -- Make special mapping for "add surrounding for line"
       vim.keymap.set('n', 'yss', 'ys_', { remap = true })
 
+      -- gcc and gc to toggle comment
+      require('mini.comment').setup()
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
