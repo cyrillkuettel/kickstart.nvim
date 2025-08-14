@@ -389,11 +389,12 @@ vim.keymap.set('n', 'Q', '<nop>')
 vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
-if vim.fn.has 'mac' == 0 then
-  vim.keymap.set('n', 'ff', function()
-    require('fff').find_files()
-  end, { desc = 'Open file picker' })
-end
+-- local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
+-- if not (is_server or vim.fn.has 'mac' == 1) then
+--   vim.keymap.set('n', 'ff', function()
+--     require('fff').find_files()
+--   end, { desc = 'Open file picker' })
+-- end
 
 -- Use vertical split for vim help
 vim.api.nvim_create_autocmd('BufEnter', {
@@ -697,10 +698,7 @@ require('lazy').setup({
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
       -- Second most used command
-      vim.keymap.set('n', 'ff', function()
-        require('telescope.builtin').find_files()
-      end, { desc = 'Find files' })
-
+      vim.keymap.set('n', 'ff', builtin.find_files, { desc = 'Find files' })
       -- Most used command by far
       -- K to full text search
       -- default K - looks up word under cursor in man pages (rarely useful so we're overriding here)
