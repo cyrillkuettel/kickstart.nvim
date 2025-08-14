@@ -1,12 +1,9 @@
-local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
-if is_server then
-  return {}
-end
-if vim.fn.has 'mac' == 1 then
-  return {}
-end
 return {
   'dmtrKovalenko/fff.nvim',
+  cond = function()
+    local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
+    return not is_server and vim.fn.has 'mac' ~= 1
+  end,
   build = 'cargo build --release',
   opts = {
     -- Core settings
