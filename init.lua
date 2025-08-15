@@ -112,6 +112,7 @@ vim.opt.showmode = false
 -- for https://github.com/rmagatti/auto-session
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,terminal,localoptions'
 
+local is_mac = vim.fn.has 'mac' == 1
 local is_graphical = vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.fn.has 'mac' == 1
 if is_graphical then
   -- Sync clipboard between OS and Neovim.
@@ -253,19 +254,23 @@ vim.keymap.set('n', '<S-Tab>', ':Neotree toggle reveal<CR>', { noremap = true, s
 -- Another escape key
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode with jk' })
 vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and stay in visual mode' })
-vim.keymap.set('n', '<A-S-2>', function()
+
+vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
+
+local function toggle_neotree()
   if vim.bo.filetype == 'neo-tree' then
     return
   end
   vim.cmd 'Neotree reveal'
-end, { noremap = true, silent = true, desc = 'Open NeoTree and reveal current file' })
-vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and stay in visual mode' })
+end
+
+vim.keymap.set('n', '<A-S-2>', toggle_neotree)
+vim.keymap.set('n', '<D-S-2>', toggle_neotree)
 
 --  Alt + Shift + I  for my favorite navigation.
 -- Remove all the Ctrl+I and Ctrl+O mappings first
 -- This makes Alt+Shift+O jump forward (opposite of normal Ctrl+O)
 -- We also make sure this works on Mac:
-local is_mac = vim.fn.has 'mac' == 1
 local mod = is_mac and 'D' or 'A' -- Same key that's "special" in Apple's alternate reality
 
 -- Jump forward (opposite of normal Ctrl+O, this is just how I like it)
