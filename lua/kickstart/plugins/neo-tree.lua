@@ -25,10 +25,11 @@ return {
         -- Keep the default mapping to close with \
         mappings = {
           ['\\'] = 'close_window',
+          ['.'] = 'noop', -- So many times i accidentally pressed this, causing it to change root
           -- You could add other mappings here if needed
         },
         position = 'left', -- Or 'right'
-        width = 30, -- Adjust width as needed
+        width = 33, -- Adjust width as needed
       },
       -- Keep Neo-tree open even when opening specific file types
       open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' },
@@ -43,8 +44,5 @@ return {
     git_status = {
       follow_current_file = { enabled = true }, -- Also follow in git status source
     },
-    -- Removed open_on_startup = true
-    -- Removed global follow_current_file
   },
-  -- Removed config function, lazy.nvim handles setup via opts
 }
