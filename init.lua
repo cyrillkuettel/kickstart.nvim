@@ -392,10 +392,19 @@ vim.keymap.set('n', 'Q', '<nop>')
 vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
-if vim.fn.has 'mac' == 0 then
+-- Second most used command
+-- Check if we're on a server (no display) or on Mac
+local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
+local is_mac = vim.fn.has 'mac' == 1
+
+-- Use fff on graphical non-Mac systems
+if not is_server and not is_mac then
   vim.keymap.set('n', 'ff', function()
     require('fff').find_files()
   end, { desc = 'Open file picker' })
+elseif is_server then
+  -- Use telescope on servers
+  vim.keymap.set('n', 'ff', require('telescope.builtin').find_files, { desc = 'Find files' })
 end
 
 -- Use vertical split for vim help
@@ -698,11 +707,6 @@ require('lazy').setup({
       vim.keymap.set('n', ',ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       -- I need to use this one more
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-
-      -- Second most used command
-      vim.keymap.set('n', 'ff', function()
-        require('telescope.builtin').find_files()
-      end, { desc = 'Find files' })
 
       -- Most used command by far
       -- K to full text search
