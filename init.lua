@@ -285,8 +285,9 @@ end, { noremap = true, silent = true, desc = 'Jump backward in jump list' })
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
+-- ============================= Diagnostic keymaps =================================================
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>ym', '<cmd>redir @+ | messages | redir END<CR>', { desc = 'Yank all messages to clipboard' })
 
 vim.api.nvim_create_user_command('MakeLint', function()
   -- Run linting and put things int quicklist
