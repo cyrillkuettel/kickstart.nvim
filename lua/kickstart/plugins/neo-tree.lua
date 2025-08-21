@@ -7,7 +7,7 @@ return {
   dependencies = {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-    'MunifTanjim/nui.nvim',
+    'rpbaptist/nui.nvim', -- Use this fork while we have this issue with ainvalid window id" (https://github.com/MunifTanjim/nui.nvim/pull/412)
   },
   lazy = false, -- don't lazy-load neo-tree so netrw hijacking on startup works (#1489))
   keys = {

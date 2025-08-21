@@ -522,12 +522,6 @@ require('lazy').setup({
     'michaeljsmith/vim-indent-object',
     lazy = false,
   },
-  { -- Nice looking floating command line
-    'VonHeikemen/fine-cmdline.nvim',
-    dependencies = {
-      'MunifTanjim/nui.nvim',
-    },
-  },
   {
     'eandrju/cellular-automaton.nvim',
     lazy = false,
