@@ -398,16 +398,6 @@ vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
 local is_mac = vim.fn.has 'mac' == 1
 
--- Use fff on graphical non-Mac systems
-if not is_server and not is_mac then
-  vim.keymap.set('n', 'ff', function()
-    require('fff').find_files()
-  end, { desc = 'Open file picker' })
-elseif is_server then
-  -- Use telescope on servers
-  vim.keymap.set('n', 'ff', require('telescope.builtin').find_files, { desc = 'Find files' })
-end
-
 -- Use vertical split for vim help
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '*.txt',
@@ -829,6 +819,15 @@ require('lazy').setup({
           prompt_title = 'pyramid views',
         }
       end, { desc = '[S]earch [O]negov [V]iews' })
+
+      -- Use fff on graphical non-Mac systems
+      if not is_server and not is_mac then
+        vim.keymap.set('n', 'ff', function()
+          require('fff').find_files()
+        end, { desc = 'Open file picker' })
+      elseif is_server then
+            vim.keymap.set('n', 'ff', builtin.find_files, { desc = 'Find files' })
+      end
 
       vim.keymap.set('n', '<leader>sch', function()
         builtin.find_files {
