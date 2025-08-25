@@ -1,9 +1,8 @@
 return {
   'dmtrKovalenko/fff.nvim',
   cond = function()
-    return false
-    -- local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
-    -- return not is_server and vim.fn.has 'mac' ~= 1
+    local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
+    return not is_server and vim.fn.has 'mac' ~= 1
   end,
   build = 'cargo build --release',
   opts = {

@@ -814,7 +814,14 @@ require('lazy').setup({
         }
       end, { desc = '[S]earch [O]negov [V]iews' })
 
-      vim.keymap.set('n', 'ff', builtin.find_files, { desc = 'Find files' })
+      -- Use fff on graphical non-Mac systems
+      if not is_server and not is_mac then
+        vim.keymap.set('n', 'ff', function()
+          require('fff').find_files()
+        end, { desc = 'Open file picker' })
+      elseif is_server then
+            vim.keymap.set('n', 'ff', builtin.find_files, { desc = 'Find files' })
+      end
 
       vim.keymap.set('n', '<leader>sch', function()
         builtin.find_files {
