@@ -4,13 +4,12 @@ return {
   cond = not vim.g.started_by_firenvim,
   opts = {
     log_level = 'error',
-    auto_session_suppress_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-
-    preserve_buffer_on_restore = function(bufnr)
-      -- Function that returns true if a buffer should be preserved when restoring a session
-      -- we don't want to restore the noneckpain buffers as it would erroneously set these to the middle window? which doesn't make any sense why it does that
-      return not (vim.bo[bufnr].buftype == 'nofile' and vim.bo[bufnr].filetype == 'no-neck-pain')
-    end,
+    enabled = true, -- Enables/disables auto creating, saving and restoring
+    auto_save = true, -- Enables/disables auto saving session on exit
+    auto_restore = true, -- Enables/disables auto restoring session on start
+    -- auto_create = true, -- Enables/disables auto creating new session files. Can be a function that returns true if a new session file should be allowed
+    auto_restore_last_session = false, -- On startup, loads the last saved session if session for cwd does not exist
+    cwd_change_handling = false, -- Automatically save/restore sessions when changing directories
 
     pre_cwd_changed_cmds = {
       'Neotree close',
@@ -19,16 +18,30 @@ return {
     -- post_restore_cmds = { 'Neotree buffers' },
     pre_save_cmds = {
       'Neotree close',
-      -- Un-toggle NoNeckPain before closing nvim
+      -- Manually find and delete no-neck-pain buffers before saving the session.
+      -- This is a robust, synchronous way to prevent them from being saved,
+      -- avoiding race conditions with the plugin's own commands on exit.
       function()
-        if require('no-neck-pain').state.enabled then
-          vim.cmd 'NoNeckPain'
+        local bufs_to_delete = {}
+        for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.bo[bufnr].filetype == 'no-neck-pain' then
+            table.insert(bufs_to_delete, bufnr)
+          end
+        end
+
+        if #bufs_to_delete > 0 then
+          vim.notify(
+            'AutoSession: Removing ' .. #bufs_to_delete .. ' no-neck-pain buffer(s) before saving.',
+            vim.log.levels.INFO
+          )
+          for _, bufnr in ipairs(bufs_to_delete) do
+            -- Force delete the buffer without saving
+            vim.api.nvim_buf_delete(bufnr, { force = true })
+          end
         end
       end,
     },
-    -- Close buffers with the 'no-neck-pain' filetype before saving the session
-    close_filetypes_on_save = { 'no-neck-pain' },
     use_git_branch = true,
-    show_auto_restore_notif = true, -- Whether to show a notification when auto-restoring
+    show_auto_restore_notif = false, -- Whether to show a notification when auto-restoring
   },
 }
