@@ -1233,6 +1233,11 @@ require('lazy').setup({
           }
         end
       end,
+      formatters = {
+        prettierd = {
+          args = { '--tab-width=4' },
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
