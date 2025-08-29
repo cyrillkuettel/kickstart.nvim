@@ -110,7 +110,7 @@ vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
 -- for https://github.com/rmagatti/auto-session
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,terminal,localoptions'
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 
 local is_mac = vim.fn.has 'mac' == 1
 local is_graphical = vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.fn.has 'mac' == 1
@@ -318,7 +318,8 @@ vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-vim.keymap.set('n', 'nn', '<cmd>NoNeckPain<cr>', { desc = 'Center buffer' })
+vim.keymap.set('n', ',nn', '<cmd>NoNeckPain<cr>', { desc = 'Center buffer' })
+vim.keymap.set('n', ',ns', '<cmd>NoNeckPainScratchPad<cr>', { desc = 'Toggle scratchpad' })
 
 -- Function to toggle Aider window
 _G.ToggleAiderWindow = function()
@@ -390,13 +391,14 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 -- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 vim.keymap.set('n', 'Q', '<nop>')
-vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
+
+-- Almost never do I want this
+-- vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
 vim.keymap.set('x', 'p', 'P', { desc = 'paste without replacing clipboard' })
 
 -- Second most used command
 -- Check if we're on a server (no display) or on Mac
 local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
-local is_mac = vim.fn.has 'mac' == 1
 
 -- Use vertical split for vim help
 vim.api.nvim_create_autocmd('BufEnter', {
@@ -689,7 +691,8 @@ require('lazy').setup({
       vim.keymap.set('n', ',sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', ',sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
-      vim.keymap.set('n', ',ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', ',ts', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', ',ss', '<cmd>AutoSession search<CR>', { desc = '[S]earch [S]essions' })
       -- I need to use this one more
       vim.keymap.set('n', ',sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
@@ -816,7 +819,7 @@ require('lazy').setup({
 
       vim.keymap.set('n', 'öö', function() -- Why not?
         local args
-        local configd = require('telescope.config').values
+        local config = require('telescope.config').values
         if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
           args = config.pickers.live_grep.additional_args()
         else
@@ -1406,7 +1409,7 @@ require('lazy').setup({
 
       -- Overwrite background color to be darker
       -- cyrill
-      vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
+      -- vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
 
       -- Set the color for plain text
       vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
@@ -1465,11 +1468,6 @@ require('lazy').setup({
 
       -- gcc and gc to toggle comment
       require('mini.comment').setup()
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-
-      -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
@@ -1544,12 +1542,25 @@ require('lazy').setup({
     'shortcuts/no-neck-pain.nvim',
     opts = {
       autocmds = {
-        enableOnVimEnter = false, -- Issues with auto-session. Can't auto start. I tried for a long time.
+        enableOnVimEnter = 'safe', -- Use the plugin's built-in safe startup
+      },
+      buffers = {
+        wo = {
+          fillchars = 'eob: ',
+        },
+      },
+      scratchPad = {
+        -- set to `false` to
+        -- disable auto-saving
+        enabled = true,
+        -- set to `nil` to default
+        -- to current working directory
+        location = '~/Documents/NoNeckpain_Scratchpad',
+      },
+      bo = {
+        filetype = 'md',
       },
     },
-    config = function(_, opts)
-      require('no-neck-pain').setup(opts)
-    end,
   },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`

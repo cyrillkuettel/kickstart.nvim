@@ -6,6 +6,7 @@ return {
   end,
   build = 'cargo build --release',
   opts = {
+    timeout = 10, --timeout for buildi command
     base_path = vim.fn.getcwd(),
     prompt = '🪿 ',
     title = 'FFFiles',

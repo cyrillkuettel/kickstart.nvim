@@ -30,7 +30,7 @@ return {
       local filetype = vim.bo.filetype
 
       if filetype == 'lua' then
-        return 3000 -- 3 seconds for Lua files
+        return 10000 -- 10 seconds for Lua files
       else
         return 1000 -- Default for other files (milliseconds)
       end
