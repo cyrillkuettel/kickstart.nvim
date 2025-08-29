@@ -4,17 +4,7 @@ return {
     local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
     return not is_server and vim.fn.has 'mac' ~= 1
   end,
-  build = function(plugin)
-    local result = vim
-      .system({ 'cargo', 'build', '--release' }, {
-        cwd = plugin.dir,
-        timeout = 600000, -- 10 minutes in ms
-      })
-      :wait()
-    if result.code ~= 0 then
-      error('Build failed: ' .. (result.stderr or ''))
-    end
-  end,
+  build = 'cargo build --release',
   opts = {
     base_path = vim.fn.getcwd(),
     prompt = '🪿 ',
