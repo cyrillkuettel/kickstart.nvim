@@ -814,13 +814,28 @@ require('lazy').setup({
         }
       end, { desc = '[S]earch [O]negov [V]iews' })
 
+      vim.keymap.set('n', 'öö', function() -- Why not?
+        local args
+        local configd = require('telescope.config').values
+        if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
+          args = config.pickers.live_grep.additional_args()
+        else
+          args = {}
+        end
+        builtin.live_grep {
+          search_dirs = { 'src/onegov/pas' },
+          additional_args = args,
+          prompt_title = 'Grep in PAS',
+        }
+      end, { desc = '[Grep] [P]AS' })
+
       -- Use fff on graphical non-Mac systems
       if not is_server and not is_mac then
         vim.keymap.set('n', 'ff', function()
           require('fff').find_files()
         end, { desc = 'Open file picker' })
       elseif is_server then
-            vim.keymap.set('n', 'ff', builtin.find_files, { desc = 'Find files' })
+        vim.keymap.set('n', 'ff', builtin.find_files, { desc = 'Find files' })
       end
 
       vim.keymap.set('n', '<leader>sch', function()
