@@ -1575,6 +1575,9 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
+  git = {
+    timeout = 600, -- increase timeout to 10 minutes
+  },
   change_detection = {
     enabled = false,
     notify = false,
