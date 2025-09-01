@@ -225,7 +225,7 @@ end
 -- Deal with it 😎😎😎
 vim.keymap.set('n', '<space>', '"_ciw', { desc = 'Change inner word' })
 
-vim.keymap.set('n', '<leader>bt', ':BlameToggle<cr>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>b', ':BlameToggle<cr>', { noremap = true, silent = true })
 
 vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
 vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
@@ -239,7 +239,8 @@ vim.keymap.set('n', '<leader>oll', ':e `=v:lua.vim.lsp.get_log_path()`<CR>')
 vim.keymap.set('n', 'YY', 'ZZ', { noremap = true, silent = true })
 
 -- Set the keymap in visual mode
-vim.keymap.set('v', '<leader>b', format_visual_black, {
+-- todo: doesn't work?
+vim.keymap.set('v', '<leader>bb', format_visual_black, {
   noremap = true,
   silent = true, -- Keymap itself is silent; :! might still show errors
   desc = 'Format selection with Black (--line-ranges, simple)',
@@ -778,7 +779,7 @@ require('lazy').setup({
       -- Slightly advanced example of overriding default behavior and theme
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', ',sc', function()
+      vim.keymap.set('n', ',sf', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
@@ -862,6 +863,45 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>gpy', function()
         builtin.live_grep { glob_pattern = '*.py' }
       end, { desc = 'Grep in python files' })
+
+      local function search_in_venv()
+        -- Find project root by looking for markers
+        local lsp_util_ok, lsp_util = pcall(require, 'lspconfig.util')
+        local project_root
+        if lsp_util_ok then
+          project_root = lsp_util.root_pattern('.git', 'pyproject.toml', 'setup.py', '.hg')(vim.fn.getcwd())
+        end
+        if not project_root then
+          project_root = vim.fn.getcwd() -- Fallback to current directory
+        end
+
+        -- Find venv path, prioritizing VIRTUAL_ENV
+        local venv_path = os.getenv 'VIRTUAL_ENV'
+        if not venv_path or venv_path == '' then
+          local common_venv_names = { '.venv', 'venv' }
+          for _, name in ipairs(common_venv_names) do
+            local potential_path = project_root .. '/' .. name
+            if vim.fn.isdirectory(potential_path) == 1 then
+              venv_path = potential_path
+              break
+            end
+          end
+        end
+
+        if not venv_path or venv_path == '' then
+          vim.notify('Could not find a virtual environment. Please activate it before starting Neovim.', vim.log.levels.WARN)
+          return
+        end
+
+        -- Run live_grep scoped to the venv directory
+        require('telescope.builtin').live_grep {
+          prompt_title = 'Grep in ' .. vim.fn.fnamemodify(venv_path, ':t'),
+          search_dirs = { venv_path },
+          additional_args = { '--fixed-strings' },
+        }
+      end
+
+      vim.keymap.set('n', '<leader>sv', search_in_venv, { desc = '[S]earch in [V]env only' })
     end,
   },
 
@@ -952,6 +992,7 @@ require('lazy').setup({
           map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
           map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('q', require('telescope.builtin').lsp_definitions, '[Q]uick goto definition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
@@ -1055,6 +1096,7 @@ require('lazy').setup({
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      capabilities.general = { positionEncodings = { 'utf-8' } }
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -1105,7 +1147,7 @@ require('lazy').setup({
             basedpyright = {
               exclude = { os.getenv 'HOME' .. '/**' }, -- to prevent lag, do not enable if file opened in home dir
               analysis = {
-                -- typeshedPaths = { '/home/cyrill/onegov-cloud/stubs' },
+                typeshedPaths = { vim.fn.trim(vim.fn.system 'git rev-parse --show-toplevel 2>/dev/null') .. '/stubs' },
 
                 -- Enable a basic level of checking, else auto import won't work.
                 -- basedpyright very intrusive with errors, this calms it down
@@ -1409,7 +1451,7 @@ require('lazy').setup({
 
       -- Overwrite background color to be darker
       -- cyrill
-      -- vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
+      vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
 
       -- Set the color for plain text
       vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
