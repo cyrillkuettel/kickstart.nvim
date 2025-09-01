@@ -1647,3 +1647,12 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+      vim.keymap.set('n', ',gp', function()
+        local plugins_dir = vim.fn.stdpath('data') .. '/lazy'
+        require('telescope.builtin').live_grep {
+          prompt_title = 'Search Plugins',
+          search_dirs = { plugins_dir },
+        }
+      end, { desc = '[G]rep in [P]lugins' })
+
+
