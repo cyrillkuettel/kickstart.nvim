@@ -27,6 +27,11 @@ return {
       pickers
         .new(opts, {
           prompt_title = "Cyrill's Common Commands",
+          layout_strategy = 'vertical',
+          layout_config = {
+            height = 0.4,
+            width = 0.6,
+          },
           finder = finders.new_table {
             results = commands,
             entry_maker = function(entry)
