@@ -299,8 +299,12 @@ vim.api.nvim_create_user_command('MakeLint', function()
   -- Run linting and put things int quicklist
   -- Requires you to have a makefile with 'make lint'
   local old_makeprg = vim.o.makeprg
+
   -- vim.o.makeprg = 'make lint'
   vim.o.makeprg = 'bash ./mypy.sh'
+  -- Run the command, put results in quickfix, and open the quickfix window the trouble.nvimone
+  vim.cmd 'silent make! | Trouble qflist toggle'
+  vim.cmd 'redraw!' -- Refresh display
   local old_errorformat = vim.o.errorformat
   vim.o.errorformat = '%f:%l:%c:%m,%f:%l:%m'
 
@@ -1527,6 +1531,8 @@ require('lazy').setup({
         --  - usually leverage commands such as `nvim +line file` which are executed after Neovim has been entered.
         enableOnVimEnter = 'safe', -- Use the plugin's built-in safe startup
         enableOnTabEnter = true, -- This is needed to make
+        -- When `true`, entering one of no-neck-pain side buffer will automatically skip it and go to the next available buffer.
+        skipEnteringNoNeckPainBuffer = true,
       },
       buffers = {
         wo = {
