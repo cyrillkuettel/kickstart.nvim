@@ -804,6 +804,14 @@ require('lazy').setup({
         }
       end, { desc = 'Grep in Neovim config files' })
 
+      vim.keymap.set('n', ',gp', function()
+        local plugins_dir = vim.fn.stdpath 'data' .. '/lazy'
+        require('telescope.builtin').live_grep {
+          prompt_title = 'Search Plugins',
+          search_dirs = { plugins_dir },
+        }
+      end, { desc = '[G]rep in [P]lugins' })
+
       vim.keymap.set('n', '<leader>sov', function()
         local args
         local config = require('telescope.config').values
@@ -863,11 +871,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>gch', function()
         builtin.live_grep { glob_pattern = '*.pt' }
       end, { desc = 'Grep in chameleon templates' })
-
-      vim.keymap.set('n', '<leader>gpy', function()
-        builtin.live_grep { glob_pattern = '*.py' }
-      end, { desc = 'Grep in python files' })
-
       local function search_in_venv()
         -- Find project root by looking for markers
         local lsp_util_ok, lsp_util = pcall(require, 'lspconfig.util')
@@ -1651,12 +1654,10 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-      vim.keymap.set('n', ',gp', function()
-        local plugins_dir = vim.fn.stdpath('data') .. '/lazy'
-        require('telescope.builtin').live_grep {
-          prompt_title = 'Search Plugins',
-          search_dirs = { plugins_dir },
-        }
-      end, { desc = '[G]rep in [P]lugins' })
-
-
+vim.keymap.set('n', ',gp', function()
+  local plugins_dir = vim.fn.stdpath 'data' .. '/lazy'
+  require('telescope.builtin').live_grep {
+    prompt_title = 'Search Plugins',
+    search_dirs = { plugins_dir },
+  }
+end, { desc = '[G]rep in [P]lugins' })
