@@ -1,5 +1,6 @@
 return {
-  'ThePrimeagen/harpoon',
+  --'ThePrimeagen/harpoon',
+  'gin31259461/harpoon', -- Unmerged pull request, also restore cursor position
   branch = 'harpoon2',
   dependencies = { 'nvim-lua/plenary.nvim' },
   config = function()
@@ -23,6 +24,8 @@ return {
       require('telescope.pickers')
         .new({}, {
           prompt_title = 'Harpoon',
+          -- NOTE: If at any time i switch to using git worktrees, i can get rid of this
+          mark_branch = true, -- https://github.com/ThePrimeagen/harpoon/pull/98/files
           finder = finder(),
           previewer = false,
           sorter = require('telescope.config').values.generic_sorter {},

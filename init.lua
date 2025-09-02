@@ -87,7 +87,7 @@ vim.api.nvim_create_autocmd('FileType', {
   -- vim.opt.colorcolumn = '80'
   pattern = 'python',
   callback = function()
-    vim.opt_local.colorcolumn = '80'
+    -- vim.opt_local.colorcolumn = '80'
   end,
 })
 
@@ -189,6 +189,7 @@ vim.opt.confirm = true
 
 vim.keymap.set('n', 'H', '<cmd>:BufferLineCycleNext<CR><cr>', { desc = 'Go to previous buffer' })
 vim.keymap.set('n', 'L', '<cmd>BufferLineCyclePrev<CR><cr>', { desc = 'Go to next buffer' })
+vim.keymap.set('n', 'C', 'bdelete! %d', { desc = 'Delete buffer' })
 
 -- Format visual selection with black --line-ranges
 local function format_visual_black()
@@ -310,7 +311,7 @@ vim.api.nvim_create_user_command('MakeLint', function()
   vim.o.errorformat = old_errorformat
 end, { desc = 'Run "make lint" and show results in quickfix' })
 
-vim.keymap.set('n', '<leader>l', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' })
+vim.keymap.set('n', '<leader>ml', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' })
 -- Jump to next point in quickfix list, without leaving the window
 vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
@@ -435,20 +436,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Using Ruff alongside basdpyright, therefore we defer to that
 -- language server for certain capabilities, like textDocument/hover:
-vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
-  callback = function(args)
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client == nil then
-      return
-    end
-    if client.name == 'ruff' then
-      -- Disable hover in favor of Pyright
-      client.server_capabilities.hoverProvider = false
-    end
-  end,
-  desc = 'LSP: Disable hover capability from Ruff',
-})
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
+--   callback = function(args)
+--     local client = vim.lsp.get_client_by_id(args.data.client_id)
+--     if client == nil then
+--       return
+--     end
+--     if client.name == 'ruff' then
+--       -- Disable hover in favor of Pyright
+--       client.server_capabilities.hoverProvider = false
+--     end
+--   end,
+--   desc = 'LSP: Disable hover capability from Ruff',
+-- })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -1123,6 +1124,12 @@ require('lazy').setup({
         -- auto resolving imports, go to definition and the like.
         -- This will overwrite the project specific settings
         basedpyright = {
+          handlers = {
+            -- This overrides the default handler for diagnostics with an
+            -- empty function, effectively disabling all diagnostics from this server.
+            -- Because we again we use ruff.
+            ['textDocument/publishDiagnostics'] = function() end,
+          },
           root_dir = function(fname)
             local util = require 'lspconfig.util'
             local home = os.getenv 'HOME'
@@ -1139,8 +1146,7 @@ require('lazy').setup({
             --    We'll use the directory of the file being edited as the root.
             local file_dir = vim.fs.dirname(fname)
 
-            -- 3. THE CRITICAL CHECK: Only use this fallback if the directory
-            --    is NOT your home directory. This prevents scanning all of ~.
+            -- 3. Attempt to prevent scanning all of $HOME
             if file_dir ~= home then
               return file_dir
             end
@@ -1157,7 +1163,8 @@ require('lazy').setup({
 
                 -- Enable a basic level of checking, else auto import won't work.
                 -- basedpyright very intrusive with errors, this calms it down
-                typeCheckingMode = 'standard',
+                --
+                typeCheckingMode = 'off', -- turn off for now my computer lags hard
 
                 reportMissingSuperCall = 'none',
 
@@ -1441,12 +1448,12 @@ require('lazy').setup({
     opts = ...,
   },
 ]]
+
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    --
     'crusoexia/vim-monokai',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
@@ -1457,14 +1464,19 @@ require('lazy').setup({
 
       -- Overwrite background color to be darker
       -- cyrill
-      vim.cmd.hi 'Normal guibg=#0a0a0a ctermbg=232'
+      --
+      -- That’s still dark, but less harsh than #0a0a0a, with a subtle brown tint.
+      vim.cmd.hi 'Normal guibg=#12100e ctermbg=233'
 
-      -- Set the color for plain text
+      -- Set the color for .txt files
       vim.cmd.hi 'Normal guifg=#FFFFFF' -- This line sets the text color to white
 
       -- Try to override imports
       vim.cmd.hi 'Include guifg=#FFFFFF ctermfg=15'
       vim.cmd.hi 'PreProc guifg=#FFFFFF ctermfg=15' -- This often controls import styling
+
+      -- Sets docstrings to green color (lovely, init!)
+      vim.api.nvim_set_hl(0, '@string.documentation.python', { fg = '#6A9955', italic = true })
 
       -- You can configure highlights by doing something like:
       -- vim.cmd.hi 'Comment gui=none'
@@ -1598,6 +1610,7 @@ require('lazy').setup({
         --  - use a dashboard plugin, or something that also triggers when Neovim is entered.
         --  - usually leverage commands such as `nvim +line file` which are executed after Neovim has been entered.
         enableOnVimEnter = 'safe', -- Use the plugin's built-in safe startup
+        enableOnTabEnter = true, -- This is needed to make
       },
       buffers = {
         wo = {
@@ -1653,10 +1666,3 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-vim.keymap.set('n', ',gp', function()
-  local plugins_dir = vim.fn.stdpath 'data' .. '/lazy'
-  require('telescope.builtin').live_grep {
-    prompt_title = 'Search Plugins',
-    search_dirs = { plugins_dir },
-  }
-end, { desc = '[G]rep in [P]lugins' })

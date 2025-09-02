@@ -1,4 +1,7 @@
 return {
+  -- A custom plugin by me just to have some commonly used commmands easily available
+  -- but don't want to set a keybinding.
+  -- Cyrill:
   'nvim-telescope/telescope.nvim',
   dependencies = { 'nvim-lua/plenary.nvim' },
   opts = function()
@@ -16,10 +19,13 @@ return {
           print(vim.fn.getcwd())
         end,
       },
+      { name = 'Gitsigns reset_hunk', command = ':Gitsigns reset_hunk' },
       { name = 'LSP Restart', command = ':LspRestart' },
       { name = 'Telescope Builtin', command = ':Telescope builtin' },
       { name = 'Git Status', command = ':Telescope git_status' },
       { name = 'Checkhealth', command = ':checkhealth' },
+      { name = 'LazyGitFilter', command = ':LazyGitFilter' }, -- Shows all commits
+      { name = 'LazyGitFilterCurrentFile', command = ':LazyGitFilterCurrentFile' }, -- shows a floating window with commits current file
     }
 
     local command_picker = function(opts)
@@ -63,6 +69,6 @@ return {
     end
 
     -- Create the keymap
-    vim.keymap.set('n', '<leader>mcc', command_picker, { desc = 'My Common Commands Picker' })
+    vim.keymap.set('n', '<leader>mc', command_picker, { desc = 'My Common Commands Picker' })
   end,
 }
