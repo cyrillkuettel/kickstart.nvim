@@ -182,9 +182,13 @@ vim.opt.scrolloff = 10
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.opt.confirm = true
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+-- vim.keymap.set('n', 'H', '<cmd>bprevious<cr>', { desc = 'Go to previous buffer' })
+-- - vim.keymap.set('n', 'L', '<cmd>bnext<cr>', { desc = 'Go to next buffer' })
+
+vim.keymap.set('n', 'H', '<cmd>:BufferLineCycleNext<CR><cr>', { desc = 'Go to previous buffer' })
+vim.keymap.set('n', 'L', '<cmd>BufferLineCyclePrev<CR><cr>', { desc = 'Go to next buffer' })
 
 -- Format visual selection with black --line-ranges
 local function format_visual_black()
