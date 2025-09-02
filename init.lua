@@ -1154,7 +1154,6 @@ require('lazy').setup({
             basedpyright = {
               exclude = { os.getenv 'HOME' .. '/**' }, -- to prevent lag, do not enable if file opened in home dir
               analysis = {
-                typeshedPaths = { vim.fn.trim(vim.fn.system 'git rev-parse --show-toplevel 2>/dev/null') .. '/stubs' },
 
                 -- Enable a basic level of checking, else auto import won't work.
                 -- basedpyright very intrusive with errors, this calms it down
