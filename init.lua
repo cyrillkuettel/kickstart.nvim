@@ -344,8 +344,12 @@ end, { desc = 'Run "make lint" and show results in quickfix' })
 vim.keymap.set('n', '<leader>ml', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' })
 
 -- Jump to next point in quickfix list, without leaving the window
-vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
-vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
+-- vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
+-- vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
+--
+-- Buffer navigation
+vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', { noremap = true, silent = true })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
