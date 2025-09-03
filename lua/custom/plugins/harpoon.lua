@@ -72,6 +72,7 @@ return {
     end, { desc = 'Harpoon: Go to file 4' })
 
     -- Toggle previous & next buffers stored within Harpoon list
+    -- Doesn't work?
     vim.keymap.set('n', '<C-S-P>', function()
       harpoon:list():prev()
     end, { desc = 'Harpoon: Previous file' })

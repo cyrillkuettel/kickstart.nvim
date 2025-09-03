@@ -62,6 +62,8 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
 
+local map = vim.keymap.set
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
@@ -174,7 +176,31 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+vim.opt.cursorline = false
+
+-- Replace the word cursor is on in buffer
+map('n', '<leader>ci', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Change instances' })
+
+-- create a new tab
+map('n', '<C-space>', '<cmd>tabe<cr>', { desc = 'New Tab' })
+map('n', '<C-CR>', '<cmd>tabe<cr>', { desc = 'New Tab' })
+
+-- So after pressing n or N, the match is centered and unfolded automatically. Makes navigating search results way smoother.
+map('n', 'n', 'nzzzv', { noremap = true })
+map('n', 'N', 'Nzzzv', { noremap = true })
+
+-- select entire file
+map('n', '<C-a>', 'ggVG')
+-- select last changed/yanked text
+map('n', 'gp', '"`[" . strpart(getregtype(), 0, 1) . "`]"', { expr = true, replace_keycodes = false, desc = 'Select last changed/yanked text' })
+
+-- follow links!
+map('n', '<CR>', function()
+  require('custom.utils').follow_link()
+end, { noremap = true, silent = true, desc = 'Follow link' })
+map('n', '<S-CR>', function()
+  require('custom.utils').follow_link(true)
+end, { noremap = true, silent = true, desc = 'Follow link in new tab' })
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -316,6 +342,7 @@ vim.api.nvim_create_user_command('MakeLint', function()
 end, { desc = 'Run "make lint" and show results in quickfix' })
 
 vim.keymap.set('n', '<leader>ml', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' })
+
 -- Jump to next point in quickfix list, without leaving the window
 vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
