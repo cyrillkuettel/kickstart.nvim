@@ -217,6 +217,8 @@ vim.keymap.set('n', 'H', '<cmd>:BufferLineCycleNext<CR><cr>', { desc = 'Go to pr
 vim.keymap.set('n', 'L', '<cmd>BufferLineCyclePrev<CR><cr>', { desc = 'Go to next buffer' })
 vim.keymap.set('n', 'C', 'bdelete! %d', { desc = 'Delete buffer' })
 
+vim.keymap.set('n', 'ZZ', ':wqa<CR>', { noremap = true, silent = true })
+
 -- Format visual selection with black --line-ranges
 local function format_visual_black()
   -- Todo: it would be more performant if this made a request to blackd server.
