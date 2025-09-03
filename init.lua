@@ -1195,7 +1195,7 @@ require('lazy').setup({
           enabled = true,
           settings = {
             basedpyright = {
-              exclude = { os.getenv 'HOME' .. '/**' }, -- to prevent lag, do not enable if file opened in home dir
+              exclude = { 'venv', 'static' },
               analysis = {
 
                 -- Enable a basic level of checking, else auto import won't work.
@@ -1230,14 +1230,14 @@ require('lazy').setup({
                   reportAttributeAccessIssue = 'none',
                 },
 
-                useLibraryCodeForTypes = true,
+                useLibraryCodeForTypes = false,
 
                 -- You might want to keep these 'warning'/'error' or remove the lines
                 -- reportUndefinedVariable = 'warning',
                 -- reportMissingImports = 'warning',
                 -- reportUnusedImport = 'warning',
               },
-              -- verboseOutput = true, -- Keep for debugging if needed
+              verboseOutput = true, -- Keep for debugging if needed
             },
           },
         },
