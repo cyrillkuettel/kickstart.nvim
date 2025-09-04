@@ -1201,7 +1201,7 @@ require('lazy').setup({
                 -- Enable a basic level of checking, else auto import won't work.
                 -- basedpyright very intrusive with errors, this calms it down
                 --
-                typeCheckingMode = 'off', -- turn off for now my computer lags hard
+                typeCheckingMode = 'standard', -- turn off for now my computer lags hard
 
                 reportMissingSuperCall = 'none',
 
