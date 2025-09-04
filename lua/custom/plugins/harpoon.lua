@@ -25,7 +25,7 @@ return {
         .new({}, {
           prompt_title = 'Harpoon',
           -- NOTE: If at any time i switch to using git worktrees, i can get rid of this
-          mark_branch = true, -- https://github.com/ThePrimeagen/harpoon/pull/98/files
+          mark_branch = false, -- https://github.com/ThePrimeagen/harpoon/pull/98/files
           finder = finder(),
           previewer = false,
           sorter = require('telescope.config').values.generic_sorter {},
