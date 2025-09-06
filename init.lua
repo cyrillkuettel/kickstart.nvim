@@ -213,8 +213,8 @@ vim.opt.confirm = true
 -- vim.keymap.set('n', 'H', '<cmd>bprevious<cr>', { desc = 'Go to previous buffer' })
 -- - vim.keymap.set('n', 'L', '<cmd>bnext<cr>', { desc = 'Go to next buffer' })
 
-vim.keymap.set('n', 'H', '<cmd>:BufferLineCycleNext<CR><cr>', { desc = 'Go to previous buffer' })
-vim.keymap.set('n', 'L', '<cmd>BufferLineCyclePrev<CR><cr>', { desc = 'Go to next buffer' })
+vim.keymap.set('n', 'L', '<cmd>:BufferLineCycleNext<CR><cr>', { desc = 'Go to previous buffer' })
+vim.keymap.set('n', 'H', '<cmd>BufferLineCyclePrev<CR><cr>', { desc = 'Go to next buffer' })
 vim.keymap.set('n', 'C', 'bdelete! %d', { desc = 'Delete buffer' })
 
 vim.keymap.set('n', 'ZZ', ':wqa<CR>', { noremap = true, silent = true })
@@ -349,7 +349,7 @@ vim.keymap.set('n', '<leader>ml', '<cmd>MakeLint<CR>', { desc = '[M]ake [L]int' 
 -- vim.keymap.set('n', '<C-n>', '<cmd>cnext<CR>zz')
 -- vim.keymap.set('n', '<C-p>', '<cmd>cprev<CR>zz')
 --
--- Buffer navigation
+-- Buffer navigatio
 vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', { noremap = true, silent = true })
 
