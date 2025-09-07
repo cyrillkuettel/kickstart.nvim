@@ -84,6 +84,20 @@ vim.opt.autoindent = true
 
 vim.opt.incsearch = true
 
+-- why the heck is this needed? pyrefly won't start otherwise
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'python',
+  callback = function()
+    vim.lsp.start {
+      name = 'pyrefly',
+      cmd = { 'pyrefly', 'lsp' },
+      root_dir = vim.fs.dirname(vim.fs.find({
+        'pyproject.toml',
+        '.git',
+      }, { upward = true })[1]),
+    }
+  end,
+})
 vim.api.nvim_create_autocmd('FileType', {
   -- I used to have this, but I actuallly only care about 80 char limit in python files
   -- vim.opt.colorcolumn = '80'
@@ -1160,6 +1174,7 @@ require('lazy').setup({
         -- For type checking we use mypy. So I only need basedpyright for
         -- auto resolving imports, go to definition and the like.
         -- This will overwrite the project specific settings
+        pyrefly = {},
         ruff = {
           enabled = true,
           settings = {
@@ -1216,6 +1231,7 @@ require('lazy').setup({
         'prettierd', -- Used to format javascript and typescript code
         'eslint_d', -- Used to lint javascript and typescript code
         'rust-analyzer', -- Used for rust development
+        'pyrefly',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1224,6 +1240,9 @@ require('lazy').setup({
         automatic_installation = false,
         handlers = {
           function(server_name)
+            if not servers[server_name] then
+              return
+            end
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
