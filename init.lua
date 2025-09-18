@@ -1164,8 +1164,9 @@ require('lazy').setup({
 
           for i, line in ipairs(other_lines) do
             table.insert(new_lines, line)
-            -- After inserting the __future__ import, add the moved imports
+            -- After inserting the __future__ import, add a blank line then the moved imports
             if line:match('^from%s+__future__%s+import') and not future_inserted then
+              table.insert(new_lines, "") -- Add blank line after __future__ import
               for _, import_line in ipairs(imports_to_move) do
                 table.insert(new_lines, import_line)
               end
