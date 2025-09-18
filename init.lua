@@ -1120,6 +1120,88 @@ require('lazy').setup({
         end,
       })
 
+      -- Python import ordering fix function
+      local function fix_python_imports(bufnr)
+        if vim.bo[bufnr].filetype ~= 'python' then
+          return
+        end
+
+        local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+        -- Find __future__ import line
+        local future_line_idx = nil
+        for i, line in ipairs(lines) do
+          if line:match('^from%s+__future__%s+import') then
+            future_line_idx = i
+            break
+          end
+        end
+
+        if not future_line_idx then
+          return -- No __future__ import, nothing to fix
+        end
+
+        -- Find imports above the __future__ import
+        local imports_to_move = {}
+        local other_lines = {}
+
+        for i, line in ipairs(lines) do
+          if i < future_line_idx then
+            if line:match('^%s*import%s+') or (line:match('^%s*from%s+') and not line:match('^%s*from%s+__future__')) then
+              table.insert(imports_to_move, line)
+            else
+              table.insert(other_lines, line)
+            end
+          else
+            table.insert(other_lines, line)
+          end
+        end
+
+        -- If we found imports to move, reconstruct the file
+        if #imports_to_move > 0 then
+          local new_lines = {}
+          local future_inserted = false
+
+          for i, line in ipairs(other_lines) do
+            table.insert(new_lines, line)
+            -- After inserting the __future__ import, add the moved imports
+            if line:match('^from%s+__future__%s+import') and not future_inserted then
+              for _, import_line in ipairs(imports_to_move) do
+                table.insert(new_lines, import_line)
+              end
+              future_inserted = true
+            end
+          end
+
+          vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
+        end
+      end
+
+      -- Auto-fix imports on save
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        group = vim.api.nvim_create_augroup('python-import-fix', { clear = true }),
+        pattern = '*.py',
+        callback = function(args)
+          fix_python_imports(args.buf)
+        end,
+      })
+
+      -- Auto-fix imports after LSP operations (with delay to let LSP finish)
+      vim.api.nvim_create_autocmd('TextChanged', {
+        group = vim.api.nvim_create_augroup('python-import-fix-lsp', { clear = true }),
+        pattern = '*.py',
+        callback = function(args)
+          vim.defer_fn(function()
+            fix_python_imports(args.buf)
+          end, 100) -- 100ms delay to let LSP operations complete
+        end,
+      })
+
+      -- Manual command to fix imports
+      vim.api.nvim_create_user_command('FixPythonImports', function()
+        fix_python_imports(vim.api.nvim_get_current_buf())
+      end, { desc = 'Fix Python import ordering' })
+
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
