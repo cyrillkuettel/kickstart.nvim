@@ -9,12 +9,16 @@ return {
       },
       localSettings = {
         ['.*'] = {
-          selector = 'textarea:not([readonly], [aria-readonly]),  div[role="textbox"],  div[contenteditable="true"].ProseMirror[max-w="[60ch]"]',
+          selector = 'textarea:not([readonly], [aria-readonly])',
           takeover = 'never', -- Prevents auto-takeover of textareas
+        },
+        ['https?://claude\\.ai/'] = {
+          selector = 'div[contenteditable="true"][role="textbox"]',
+          takeover = 'never',
+          priority = 1,
         },
       },
     }
     -- Any additional FireVim-specific settings can go here
   end,
 }
-
