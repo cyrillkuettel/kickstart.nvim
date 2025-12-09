@@ -746,7 +746,7 @@ require('lazy').setup({
       local previewers = require 'telescope.previewers'
 
       -- Load custom telescope search keymaps from separate file
-      require 'custom.telescope_search_keymaps'(builtin, previewers)
+      require('custom.telescope_search_keymaps')(builtin, previewers)
     end,
   },
 
@@ -1415,8 +1415,7 @@ require('lazy').setup({
         -- This is recommended if you:
         --  - use a dashboard plugin, or something that also triggers when Neovim is entered.
         --  - usually leverage commands such as `nvim +line file` which are executed after Neovim has been entered.
-        -- enableOnVimEnter = 'safe', -- Use the plugin's built-in safe startup
-        enableOnVimEnter = false, -- Use the plugin's built-in safe startup
+        enableOnVimEnter = 'safe', -- Use the plugin's built-in safe startup
         enableOnTabEnter = true, -- This is needed to make
         -- When `true`, entering one of no-neck-pain side buffer will automatically skip it and go to the next available buffer.
         skipEnteringNoNeckPainBuffer = true,
