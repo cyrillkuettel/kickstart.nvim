@@ -35,14 +35,7 @@ return function(builtin, previewers)
       local cmd = {
         'sh',
         '-c',
-        'cd "'
-          .. git_root
-          .. '" && '
-          .. 'git -c core.pager=delta -c delta.side-by-side=false diff '
-          .. entry.value
-          .. '^! -- "'
-          .. entry.current_file
-          .. '"',
+        'cd "' .. git_root .. '" && ' .. 'git -c core.pager=delta -c delta.side-by-side=false diff ' .. entry.value .. '^! -- "' .. entry.current_file .. '"',
       }
 
       return cmd
@@ -136,11 +129,27 @@ return function(builtin, previewers)
     builtin.live_grep {
       search_dirs = { 'src/onegov/translator_directory' },
       additional_args = args,
+      prompt_title = '[Grep] in TranslatorDir',
+    }
+  end, { desc = '[Grep] in TranslatorDir' })
+
+  -- File type specific searches
+
+  vim.keymap.set('n', 'pas', function()
+    local args
+    local config = require('telescope.config').values
+    if config and config.pickers and config.pickers.live_grep and config.pickers.live_grep.additional_args then
+      args = config.pickers.live_grep.additional_args()
+    else
+      args = {}
+    end
+    builtin.live_grep {
+      search_dirs = { 'src/onegov/pas' },
+      additional_args = args,
       prompt_title = 'Grep in PAS',
     }
   end, { desc = '[Grep] [P]AS' })
 
-  -- File type specific searches
   local is_server = os.getenv 'SSH_TTY' ~= nil
   local is_mac = vim.loop.os_uname().sysname == 'Darwin'
 
