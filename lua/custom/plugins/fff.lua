@@ -4,7 +4,11 @@ return {
     local is_server = not (vim.env.DISPLAY or vim.env.WAYLAND_DISPLAY or vim.env.XDG_SESSION_TYPE or vim.env.XDG_CURRENT_DESKTOP)
     return not is_server and vim.fn.has 'mac' ~= 1
   end,
-  build = 'cargo build --release',
+  build = function()
+    -- this will download prebuild binary or try to use existing rustup toolchain to build from source
+    -- (if you are using lazy you can use gb for rebuilding a plugin if needed)
+    require('fff.download').download_or_build_binary()
+  end,
   opts = {
     timeout = 10, --timeout for buildi command
     base_path = vim.fn.getcwd(),
