@@ -1009,8 +1009,11 @@ require('lazy').setup({
         -- For type checking we use mypy. So I only need basedpyright for
         -- auto resolving imports, go to definition and the like.
         -- This will overwrite the project specific settings
-        pyrefly = {},
+        pyrefly = {
+          root_dir = require('lspconfig.util').root_pattern('pyproject.toml', 'setup.py', 'setup.cfg', '.git'),
+        },
         ruff = {
+          root_dir = require('lspconfig.util').root_pattern('pyproject.toml', 'setup.py', 'setup.cfg', '.git'),
           enabled = true,
           settings = {
             logLevel = 'info',
