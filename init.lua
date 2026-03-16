@@ -85,19 +85,20 @@ vim.opt.autoindent = true
 vim.opt.incsearch = true
 
 -- why the heck is this needed? pyrefly won't start otherwise
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'python',
-  callback = function()
-    vim.lsp.start {
-      name = 'pyrefly',
-      cmd = { 'pyrefly', 'lsp' },
-      root_dir = vim.fs.dirname(vim.fs.find({
-        'pyproject.toml',
-        '.git',
-      }, { upward = true })[1]),
-    }
-  end,
-})
+-- Commenting out: this causes a duplicate pyrefly instance alongside lspconfig's pyrefly = {}
+-- vim.api.nvim_create_autocmd('FileType', {
+--   pattern = 'python',
+--   callback = function()
+--     vim.lsp.start {
+--       name = 'pyrefly',
+--       cmd = { 'pyrefly', 'lsp' },
+--       root_dir = vim.fs.dirname(vim.fs.find({
+--         'pyproject.toml',
+--         '.git',
+--       }, { upward = true })[1]),
+--     }
+--   end,
+-- })
 vim.api.nvim_create_autocmd('FileType', {
   -- I used to have this, but I actuallly only care about 80 char limit in python files
   -- vim.opt.colorcolumn = '80'
@@ -191,6 +192,9 @@ vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.opt.cursorline = false
+
+-- Surround word with backticks
+map('n', 'gb', 'ysiw`', { desc = 'Surround word with backticks' })
 
 -- Replace the word cursor is on in buffer
 map('n', '<leader>ci', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = 'Change instances' })
@@ -746,7 +750,7 @@ require('lazy').setup({
       local previewers = require 'telescope.previewers'
 
       -- Load custom telescope search keymaps from separate file
-      require('custom.telescope_search_keymaps')(builtin, previewers)
+      require 'custom.telescope_search_keymaps'(builtin, previewers)
     end,
   },
 
@@ -1401,7 +1405,7 @@ require('lazy').setup({
   --
   require 'kickstart.plugins.neo-tree',
 
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   --
   -- My custom plugins
   { import = 'custom.plugins' },
