@@ -59,7 +59,10 @@ return function(builtin, previewers)
     }
     builtin.git_commits(opts)
   end
+  -- FIXME: this is broken:
   vim.keymap.set('n', ',gc', my_git_commits, { desc = '[G]it [C]ommits' })
+
+  -- this works fine
   vim.keymap.set('n', ',gs', builtin.git_status, { desc = '[G]it [S]tatus' })
 
   -- Diagnostics and buffers
@@ -90,7 +93,8 @@ return function(builtin, previewers)
     }
   end, { desc = 'Grep in Neovim config files' })
 
-  -- Plugin searches
+  -- Greps in ~/.local/share/nvim/lazy
+  -- Rarely used in every day situations but if you're debugging plugins it's very nice
   vim.keymap.set('n', ',gp', function()
     local plugins_dir = vim.fn.stdpath 'data' .. '/lazy'
     require('telescope.builtin').live_grep {
@@ -99,7 +103,7 @@ return function(builtin, previewers)
     }
   end, { desc = '[G]rep in [P]lugins' })
 
-  -- Python/Pyramid-specific searches
+  -- Greps for 'def*' inside any 'views' folder in project root
   vim.keymap.set('n', '<leader>sov', function()
     local args
     local config = require('telescope.config').values
@@ -114,7 +118,7 @@ return function(builtin, previewers)
     builtin.live_grep {
       additional_args = args,
       default_text = 'def ',
-      prompt_title = 'pyramid views',
+      prompt_title = 'Grep python functinos',
     }
   end, { desc = '[S]earch [O]negov [V]iews' })
 
