@@ -1289,7 +1289,10 @@ require('lazy').setup({
     end,
   },
   { -- Highlight, edit, and navigate code
+    -- NOTE: Do NOT use branch = 'main' — that is a complete rewrite requiring nvim v0.12+.
+    -- The default branch (master) is correct. See: https://github.com/nvim-treesitter/nvim-treesitter/discussions/7927
     'nvim-treesitter/nvim-treesitter',
+    branch = 'master',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
