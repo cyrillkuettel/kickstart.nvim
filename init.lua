@@ -84,17 +84,23 @@ vim.opt.autoindent = true
 
 vim.opt.incsearch = true
 
--- why the heck is this needed? pyrefly won't start otherwise
+-- FIXME:
+-- pyrefly won't attach (go-to-def broken) without this manual start via vim.lsp.start.
+-- lspconfig's pyrefly = {} entry does NOT reliably attach the client, so we use this autocmd.
+-- The nil guard prevents starting when there's no project root (avoids home dir scanning).
+-- This is a bit crude... I however have not found any other way to reliable, more elegant way to start this python LSP.
+-- Hours wasted on this problem: 2 (increase count whenever youre working on this)
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'python',
   callback = function()
+    local root = vim.fs.dirname(vim.fs.find({ 'pyproject.toml', '.git' }, { upward = true })[1])
+    if not root then
+      return
+    end
     vim.lsp.start {
       name = 'pyrefly',
       cmd = { 'pyrefly', 'lsp' },
-      root_dir = vim.fs.dirname(vim.fs.find({
-        'pyproject.toml',
-        '.git',
-      }, { upward = true })[1]),
+      root_dir = root,
     }
   end,
 })
